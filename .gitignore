@@ -1,2 +1,23 @@
+# Next.js
+.next/
+
+# Node
+node_modules/
+npm-debug.log*
+.turbo
+
+# System
 .DS_Store
-.env.fish
+*.pem
+
+# Debug
+*.log
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
