@@ -230,7 +230,7 @@ export default function Page() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="topK">Top K</Label>
+              <Label htmlFor="topK">Top K Logprobs</Label>
               <Input
                 id="topK"
                 type="number"
@@ -415,6 +415,7 @@ export default function Page() {
                     const pairs = selectedToken.top_tokens.map((t, i) => ({
                       token: formatWhitespaceToken(t),
                       logprob: selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0,
+                      prob: Math.exp(selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0),
                       logit: selectedToken.top_logits ? selectedToken.top_logits[i] : 0
                     }));
                     // Sort by logprobs in descending order
@@ -426,19 +427,18 @@ export default function Page() {
                           data={[
                             {
                               type: "bar",
-                              x: pairs.map(p => p.logprob),
+                              x: pairs.map(p => p.prob),
                               y: pairs.map(p => p.token),
                               orientation: "h",
                               marker: { color: "#1f77b4" },
-                              name: "Log Probability"
+                              name: "Probability"
                             },
                           ]}
                           layout={{
-                            title: "Log Probabilities for Top Candidates",
+                            title: "Probabilities for Top Candidates",
                             xaxis: { 
-                              title: "Log Probability",
-                              autorange: false,
-                              range: [0, -3],
+                              title: "Probability",
+                              autorange: true,
                             },
                             yaxis: { 
                               title: "Tokens", 
@@ -466,6 +466,7 @@ export default function Page() {
                               <thead>
                                 <tr className="border-b">
                                   <th className="text-left py-2">Token</th>
+                                  <th className="text-right py-2">Probability</th>
                                   <th className="text-right py-2">Log Prob</th>
                                   <th className="text-right py-2">Logit</th>
                                 </tr>
@@ -474,6 +475,7 @@ export default function Page() {
                                 {pairs.map((pair, idx) => (
                                   <tr key={idx} className="border-b border-gray-100">
                                     <td className="py-1 font-mono">{pair.token}</td>
+                                    <td className="text-right py-1">{pair.prob.toFixed(4)}</td>
                                     <td className="text-right py-1">{pair.logprob.toFixed(4)}</td>
                                     <td className="text-right py-1">{pair.logit.toFixed(4)}</td>
                                   </tr>

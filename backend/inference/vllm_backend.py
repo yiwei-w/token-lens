@@ -8,9 +8,10 @@ class VLLMBackend(InferenceBackend):
     def __init__(self):
         self.model_name = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
         # Initialize vLLM with the model
-        self.llm = LLM(model=self.model_name, trust_remote_code=True)
+        self.llm = LLM(model=self.model_name, trust_remote_code=True, max_logprobs=151936)
         # Get the tokenizer from the LLM for token decoding
         self.tokenizer = self.llm.get_tokenizer()
+        # assert self.tokenizer.vocab_size == 151936, f"Vocab size is not 151643, but {self.tokenizer.vocab_size}"
 
     def generate(self, prompt: str, temperature: float, max_new_tokens: int, top_k: int) -> dict:
         # Configure sampling parameters
@@ -18,7 +19,7 @@ class VLLMBackend(InferenceBackend):
             temperature=temperature,
             max_tokens=max_new_tokens,
             top_k=-1,
-            logprobs=top_k,  # Request logprobs for top_k tokens
+            logprobs=500,  # Request logprobs for top 500 tokens as approximation for entropy; all tokens would be too slow
         )
         
         try:
@@ -34,49 +35,38 @@ class VLLMBackend(InferenceBackend):
             
             # Check if logprobs are available
             if hasattr(output.outputs[0], 'logprobs') and output.outputs[0].logprobs:
+                # Get the actual token IDs that were generated
+                generated_token_ids = output.outputs[0].token_ids
+                
                 for i, token_logprobs in enumerate(output.outputs[0].logprobs):
                     if not token_logprobs:  # Skip if no logprobs for this token
                         continue
                     
-                    # Convert Logprob objects to float values if needed
                     float_logprobs = {}
-                    for token, logprob in token_logprobs.items():
-                        # Check if logprob is a Logprob object
-                        if hasattr(logprob, 'logprob'):
-                            # It's a Logprob object, extract the logprob value
-                            float_logprobs[token] = logprob.logprob
-                        else:
-                            # It's already a float or something else
-                            float_logprobs[token] = float(logprob)
+                    for token_id, logprob in token_logprobs.items():
+                        float_logprobs[token_id] = logprob.logprob
                     
-                    # Sort using the float values
                     sorted_logprobs = sorted(float_logprobs.items(), key=lambda x: x[1], reverse=True)
+
+                    probs_sum = sum(np.exp(logprob) for logprob in float_logprobs.values())
+                    if probs_sum < 0.95:
+                        # Handle the case where probability mass is too low
+                        print(f"Warning: Sum of probabilities is only {probs_sum:.4f}, less than 0.95")
                     
-                    # Get token ID and decode it to text
-                    token_id = sorted_logprobs[0][0]
-                    # Check if token_id is a string representation of an integer
-                    if isinstance(token_id, str) and token_id.isdigit():
-                        token_id = int(token_id)
-                    # Decode the token ID to get the actual text
-                    try:
-                        token_text = self.tokenizer.decode([token_id]) if isinstance(token_id, int) else token_id
-                    except:
-                        # Fallback if decoding fails
-                        token_text = str(token_id)
+                    # Get the actual token that was sampled by the model
+                    if i < len(generated_token_ids):
+                        selected_token_id = generated_token_ids[i]
+                        selected_token_text = self.tokenizer.decode([selected_token_id])
+                    
+                    
                     
                     # Extract top tokens and their logprobs
                     top_tokens = []
                     top_logprobs_values = []
                     
-                    for token, logprob in sorted_logprobs[:top_k]:
-                        # Decode token if it's an ID
-                        if isinstance(token, str) and token.isdigit():
-                            token = int(token)
-                        try:
-                            decoded_token = self.tokenizer.decode([token]) if isinstance(token, int) else token
-                            top_tokens.append(decoded_token)
-                        except:
-                            top_tokens.append(str(token))
+                    for token_id, logprob in sorted_logprobs[:top_k]:
+                        decoded_token = self.tokenizer.decode([token_id])
+                        top_tokens.append(decoded_token)
                         top_logprobs_values.append(logprob)
                     
                     # Calculate probability and entropy
@@ -85,8 +75,8 @@ class VLLMBackend(InferenceBackend):
                     probs = probs / np.sum(probs)  # Normalize to ensure they sum to 1
                     
                     # Get probability of the selected token
-                    token_prob = np.exp(sorted_logprobs[0][1])
-                    log_prob = sorted_logprobs[0][1]
+                    selected_token_logprob = float_logprobs[selected_token_id]
+                    selected_token_prob = np.exp(selected_token_logprob)
                     
                     # Calculate entropy: -sum(p * log(p))
                     # Use a numerically stable approach
@@ -97,9 +87,9 @@ class VLLMBackend(InferenceBackend):
                     top_logits_values = [lp * 1.0 for lp in top_logprobs_values]  # Simple scaling for demonstration
                     
                     tokens_data.append({
-                        "text": token_text,
-                        "prob": float(token_prob),
-                        "log_prob": float(log_prob),
+                        "text": selected_token_text,
+                        "prob": float(selected_token_prob),
+                        "log_prob": float(selected_token_logprob),
                         "entropy": float(entropy),
                         "top_tokens": top_tokens,
                         "top_logprobs": top_logprobs_values,
