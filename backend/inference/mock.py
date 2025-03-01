@@ -1,94 +1,55 @@
 # backend/inference/mock.py
 from . import InferenceBackend
+from transformers import AutoTokenizer
+import random
 
 class MockBackend(InferenceBackend):
     """
-    A mock inference backend that returns a fixed list of tokens, probabilities,
-    and top-k logits. Useful for testing the frontend quickly without running
-    an actual model.
+    A mock inference backend that samples random tokens from the DeepSeek-R1-Distill-Qwen-1.5B
+    tokenizer vocabulary. Useful for testing the frontend without running the actual model.
     """
     def __init__(self):
-        # Define a static list of token data
-        self.mock_tokens = [
-            {
-                "text": "Hello",
-                "prob": 0.9,
-                "log_prob": -0.1053605,
-                "entropy": 1.5,
-                "top_tokens": ["Hello", "Hi", "Hey"],
-                "top_logits": [5.0, 3.2, 2.9]
-            },
-            {
-                "text": "world",
-                "prob": 0.8,
-                "log_prob": -0.2231435,
-                "entropy": 2.2,
-                "top_tokens": ["world", "earth", "universe"],
-                "top_logits": [4.8, 3.5, 2.7]
-            },
-            {
-                "text": "this",
-                "prob": 0.5,
-                "log_prob": -0.693147,
-                "entropy": 3.0,
-                "top_tokens": ["this", "that", "it"],
-                "top_logits": [2.5, 2.3, 2.1]
-            },
-            {
-                "text": "is",
-                "prob": 0.6,
-                "log_prob": -0.51,
-                "entropy": 2.8,
-                "top_tokens": ["is", "was", "be"],
-                "top_logits": [3.1, 2.7, 2.2]
-            },
-            {
-                "text": "a",
-                "prob": 0.4,
-                "log_prob": -0.9162907,
-                "entropy": 3.5,
-                "top_tokens": ["a", "the", "one"],
-                "top_logits": [1.8, 1.5, 1.2]
-            },
-            {
-                "text": "mock",
-                "prob": 0.7,
-                "log_prob": -0.3566749,
-                "entropy": 2.1,
-                "top_tokens": ["mock", "fake", "dummy"],
-                "top_logits": [3.5, 2.6, 2.0]
-            },
-            {
-                "text": "inference",
-                "prob": 0.65,
-                "log_prob": -0.4307829,
-                "entropy": 2.4,
-                "top_tokens": ["inference", "prediction", "guess"],
-                "top_logits": [3.0, 2.8, 2.1]
-            },
-            {
-                "text": "backend",
-                "prob": 0.55,
-                "log_prob": -0.5978370,
-                "entropy": 2.7,
-                "top_tokens": ["backend", "server", "system"],
-                "top_logits": [2.8, 2.4, 2.1]
-            },
-            {
-                "text": "!",
-                "prob": 0.95,
-                "log_prob": -0.051293,
-                "entropy": 1.0,
-                "top_tokens": ["!", ".", "?" ],
-                "top_logits": [5.2, 4.9, 4.0]
-            }
-        ]
-
+        # Load just the tokenizer from the model
+        self.tokenizer = AutoTokenizer.from_pretrained("deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B")
+        
+        # Get the vocabulary but filter out special tokens
+        vocab = self.tokenizer.get_vocab()
+        self.vocab_list = [token for token in vocab.keys() 
+                          if not token.startswith('<') and not token.endswith('>')]
+        
     def generate(self, prompt: str, temperature: float, max_new_tokens: int, top_k: int) -> dict:
-        # Return as many tokens as requested, up to the length of our mock list
-        n = min(max_new_tokens, len(self.mock_tokens))
-        tokens_data = self.mock_tokens[:n]
+        tokens_data = []
+        
+        for _ in range(max_new_tokens):
+            # Randomly sample top_k tokens
+            sampled_tokens = random.sample(self.vocab_list, min(top_k, len(self.vocab_list)))
+            
+            # Clean up the tokens by removing special characters but preserve spaces
+            cleaned_tokens = [self.tokenizer.decode([self.tokenizer.encode(t, add_special_tokens=False)[0]]) 
+                            for t in sampled_tokens]
+            
+            # Generate random logits for the top tokens (higher values for first tokens)
+            top_logits = [random.uniform(2.0, 5.0) for _ in range(len(cleaned_tokens))]
+            top_logits.sort(reverse=True)  # Sort in descending order
+            
+            # Calculate probability from first logit
+            prob = random.uniform(0.3, 0.9)
+            log_prob = random.uniform(-2.0, -0.1)
+            entropy = random.uniform(1.0, 4.0)
+            
+            token_info = {
+                "text": cleaned_tokens[0],
+                "prob": prob,
+                "log_prob": log_prob,
+                "entropy": entropy,
+                "top_tokens": cleaned_tokens,
+                "top_logits": top_logits
+            }
+            tokens_data.append(token_info)
+        
+        # Join the tokens with spaces (you might want to adjust this based on the tokenizer's behavior)
         full_text = " ".join(t["text"] for t in tokens_data)
+        
         return {
             "full_text": full_text,
             "tokens": tokens_data
