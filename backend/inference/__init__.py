@@ -9,10 +9,13 @@ class InferenceBackend(ABC):
 
 def get_backend(name: str):
     if name == "huggingface":
-        from .huggingface import HuggingFaceBackend
+        from .huggingface_backend import HuggingFaceBackend
         return HuggingFaceBackend()
     elif name == "mock":
-        from .mock import MockBackend
+        from .mock_backend import MockBackend
         return MockBackend()
+    elif name == "vllm":
+        from .vllm_backend import VLLMBackend
+        return VLLMBackend()
     else:
         raise ValueError(f"Unknown backend: {name}")

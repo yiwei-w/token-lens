@@ -32,20 +32,23 @@ function mapValueToColor(
   min: number, 
   max: number, 
   scheme: ColorScheme,
-  colorMode: "prob" | "entropy"
+  colorMode: "prob" | "logprob" | "entropy"
 ): string {
   const norm = max > min ? (value - min) / (max - min) : 0.5;
   
+  // For logprob, we want higher values (closer to 0) to be "better"
+  const adjustedNorm = colorMode === "logprob" ? (1 - norm) : 
+                       colorMode === "prob" ? (1 - norm) : norm;
+  
   switch (scheme) {
     case "blueOrange":
-      const adjustedNorm = colorMode === "prob" ? (1 - norm) : norm;
       const r = Math.round(255 * adjustedNorm);
       const b = Math.round(255 * (1 - adjustedNorm));
       return `rgb(${r}, ${Math.round(r * 0.65)}, ${b})`;
     
     case "greenRed":
-      const g = Math.round(255 * (1 - norm));
-      const r2 = Math.round(255 * norm);
+      const g = Math.round(255 * (1 - adjustedNorm));
+      const r2 = Math.round(255 * adjustedNorm);
       return `rgb(${r2}, ${g}, 0)`;
       
     default:
@@ -53,7 +56,7 @@ function mapValueToColor(
   }
 }
 
-function generateColorScale(scheme: ColorScheme, colorMode: "prob" | "entropy"): string[] {
+function generateColorScale(scheme: ColorScheme, colorMode: "prob" | "logprob" | "entropy"): string[] {
   const steps = 10;
   const colors = [];
   for (let i = 0; i < steps; i++) {
@@ -74,7 +77,7 @@ function ColorLegend({
   min: number; 
   max: number; 
   label: string;
-  colorMode: "prob" | "entropy";
+  colorMode: "prob" | "logprob" | "entropy";
 }) {
   const colors = generateColorScale(scheme, colorMode);
   
@@ -107,7 +110,7 @@ export default function Page() {
   const [tokens, setTokens] = useState<TokenData[]>([]);
   const [fullText, setFullText] = useState("");
   const [hoveredToken, setHoveredToken] = useState<TokenData | null>(null);
-  const [colorMode, setColorMode] = useState<"prob" | "entropy">("prob");
+  const [colorMode, setColorMode] = useState<"prob" | "logprob" | "entropy">("prob");
   const [loading, setLoading] = useState(false);
   const [temperature, setTemperature] = useState(1.0);
   const [maxNewTokens, setMaxNewTokens] = useState(30);
@@ -133,7 +136,11 @@ export default function Page() {
   };
 
   // Compute min and max for the selected color mode
-  const values = tokens.map((t) => (colorMode === "prob" ? t.prob : t.entropy));
+  const values = tokens.map((t) => {
+    if (colorMode === "prob") return t.prob;
+    if (colorMode === "logprob") return t.log_prob;
+    return t.entropy;
+  });
   const minVal = values.length ? Math.min(...values) : 0;
   const maxVal = values.length ? Math.max(...values) : 1;
 
@@ -201,7 +208,7 @@ export default function Page() {
         <div className="mb-6">
           <RadioGroup
             value={colorMode}
-            onValueChange={(value: "prob" | "entropy") => setColorMode(value)}
+            onValueChange={(value: "prob" | "logprob" | "entropy") => setColorMode(value)}
             className="flex w-full border rounded-lg overflow-hidden"
           >
             <div className="flex-1">
@@ -215,6 +222,19 @@ export default function Page() {
                 className="flex flex-1 items-center justify-center p-3 cursor-pointer peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground hover:bg-muted/50"
               >
                 Probability
+              </Label>
+            </div>
+            <div className="flex-1">
+              <RadioGroupItem
+                value="logprob"
+                id="logprob"
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor="logprob"
+                className="flex flex-1 items-center justify-center p-3 cursor-pointer peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground hover:bg-muted/50"
+              >
+                Log Probability
               </Label>
             </div>
             <div className="flex-1">
@@ -250,7 +270,7 @@ export default function Page() {
               scheme={colorScheme}
               min={minVal}
               max={maxVal}
-              label={colorMode === "prob" ? "Probability" : "Entropy"}
+              label={colorMode === "prob" ? "Probability" : colorMode === "logprob" ? "Log Probability" : "Entropy"}
               colorMode={colorMode}
             />
           </div>
@@ -258,7 +278,7 @@ export default function Page() {
 
         <div className="text-2xl leading-relaxed mb-6 relative">
           {tokens.map((token, index) => {
-            const value = colorMode === "prob" ? token.prob : token.entropy;
+            const value = colorMode === "prob" ? token.prob : colorMode === "logprob" ? token.log_prob : token.entropy;
             const backgroundColor = mapValueToColor(value, minVal, maxVal, colorScheme, colorMode);
             return (
               <div
@@ -298,25 +318,25 @@ export default function Page() {
                       // Create sorted pairs of tokens and logits
                       const pairs = token.top_tokens.map((t, i) => ({
                         token: t,
-                        logit: token.top_logits[i]
+                        logprob: token.top_logits[i]
                       }));
-                      // Sort by logits in descending order
-                      pairs.sort((a, b) => b.logit - a.logit);
+                      // Sort by logprobs in descending order
+                      pairs.sort((a, b) => b.logprob - a.logprob);
                       
                       return (
                         <Plot
                           data={[
                             {
                               type: "bar",
-                              x: pairs.map(p => p.logit),
+                              x: pairs.map(p => p.logprob),
                               y: pairs.map(p => p.token),
                               orientation: "h",
                               marker: { color: "#1f77b4" },
                             },
                           ]}
                           layout={{
-                            title: "Logits for Top Candidates",
-                            xaxis: { title: "Logits" },
+                            title: "Log Probabilities for Top Candidates",
+                            xaxis: { title: "Log Probability" },
                             yaxis: { 
                               title: "Tokens", 
                               automargin: true,
