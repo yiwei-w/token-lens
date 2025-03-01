@@ -112,6 +112,14 @@ function ColorLegend({
   );
 }
 
+function formatWhitespaceToken(text: string): string {
+  if (text === '\n') return '\\n';
+  if (text === '\t') return '\\t';
+  if (text === ' ') return '␣'; // Space character
+  if (text === '\r') return '\\r';
+  return text;
+}
+
 export default function Page() {
   const [prompt, setPrompt] = useState("");
   const [tokens, setTokens] = useState<TokenData[]>([]);
@@ -314,21 +322,30 @@ export default function Page() {
               {tokens.map((token, index) => {
                 const value = colorMode === "prob" ? token.prob : colorMode === "logprob" ? token.log_prob : token.entropy;
                 const backgroundColor = mapValueToColor(value, minVal, maxVal, colorScheme, colorMode);
+                
+                // Format whitespace characters for display
+                let displayText = token.text;
+                if (displayText === '\n') displayText = '\\n';
+                else if (displayText === '\t') displayText = '\\t';
+                else if (displayText === ' ') displayText = '␣'; // Space character
+                else if (displayText === '\r') displayText = '\\r';
+                
                 return (
                   <div
                     key={index}
                     className="inline-block relative"
                   >
                     <span
-                      className="mx-1 cursor-pointer rounded px-1"
+                      className="mx-1 cursor-pointer rounded px-1 text-sm"
                       style={{ 
                         backgroundColor,
                         color: 'rgba(255, 255, 255, 0.95)',
                         textShadow: '0px 0px 2px rgba(0, 0, 0, 0.3)',
+                        fontSize: '1.1rem',
                       }}
                       onClick={() => setSelectedToken(selectedToken === token ? null : token)}
                     >
-                      {token.text}
+                      {displayText}
                     </span>
                   </div>
                 );
@@ -376,7 +393,7 @@ export default function Page() {
             {selectedToken ? (
               <Card className="sticky top-6">
                 <CardHeader>
-                  <CardTitle>Token: "{selectedToken.text}"</CardTitle>
+                  <CardTitle>Token: "{formatWhitespaceToken(selectedToken.text)}"</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
@@ -396,7 +413,7 @@ export default function Page() {
                   {(() => {
                     // Create sorted pairs of tokens with logprobs and logits
                     const pairs = selectedToken.top_tokens.map((t, i) => ({
-                      token: t,
+                      token: formatWhitespaceToken(t),
                       logprob: selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0,
                       logit: selectedToken.top_logits ? selectedToken.top_logits[i] : 0
                     }));
@@ -456,7 +473,7 @@ export default function Page() {
                               <tbody>
                                 {pairs.map((pair, idx) => (
                                   <tr key={idx} className="border-b border-gray-100">
-                                    <td className="py-1">{pair.token}</td>
+                                    <td className="py-1 font-mono">{pair.token}</td>
                                     <td className="text-right py-1">{pair.logprob.toFixed(4)}</td>
                                     <td className="text-right py-1">{pair.logit.toFixed(4)}</td>
                                   </tr>
