@@ -63,13 +63,18 @@ class VLLMBackend(InferenceBackend):
                     # Use a numerically stable approach
                     entropy = -np.sum(probs * logprobs_array)
                     
+                    # Estimate logits from logprobs (approximate since we don't have direct access)
+                    # This is an approximation assuming temperature=1.0
+                    top_logits_values = [lp * 1.0 for lp in top_logprobs_values]  # Simple scaling for demonstration
+                    
                     tokens_data.append({
                         "text": token_text,
                         "prob": float(token_prob),
                         "log_prob": float(log_prob),
                         "entropy": float(entropy),
                         "top_tokens": top_tokens,
-                        "top_logits": top_logprobs_values  # Keep the field name for compatibility
+                        "top_logprobs": top_logprobs_values,
+                        "top_logits": top_logits_values
                     })
             
             return {

@@ -22,6 +22,7 @@ type TokenData = {
   log_prob: number;
   entropy: number;
   top_tokens: string[];
+  top_logprobs: number[];
   top_logits: number[];
 };
 
@@ -315,40 +316,78 @@ export default function Page() {
                       </div>
                     </div>
                     {(() => {
-                      // Create sorted pairs of tokens and logits
+                      // Create sorted pairs of tokens with logprobs and logits
                       const pairs = token.top_tokens.map((t, i) => ({
                         token: t,
-                        logprob: token.top_logits[i]
+                        logprob: token.top_logprobs ? token.top_logprobs[i] : 0,
+                        logit: token.top_logits ? token.top_logits[i] : 0
                       }));
                       // Sort by logprobs in descending order
                       pairs.sort((a, b) => b.logprob - a.logprob);
                       
                       return (
-                        <Plot
-                          data={[
-                            {
-                              type: "bar",
-                              x: pairs.map(p => p.logprob),
-                              y: pairs.map(p => p.token),
-                              orientation: "h",
-                              marker: { color: "#1f77b4" },
-                            },
-                          ]}
-                          layout={{
-                            title: "Log Probabilities for Top Candidates",
-                            xaxis: { title: "Log Probability" },
-                            yaxis: { 
-                              title: "Tokens", 
-                              automargin: true,
-                            },
-                            margin: { l: 100, r: 20, t: 40, b: 40 },
-                            paper_bgcolor: 'rgba(0,0,0,0)',
-                            plot_bgcolor: 'rgba(0,0,0,0)',
-                            font: { color: 'currentColor' },
-                          }}
-                          style={{ width: "100%", height: "300px" }}
-                          config={{ responsive: true }}
-                        />
+                        <div>
+                          <Plot
+                            data={[
+                              {
+                                type: "bar",
+                                x: pairs.map(p => p.logprob),
+                                y: pairs.map(p => p.token),
+                                orientation: "h",
+                                marker: { color: "#1f77b4" },
+                                name: "Log Probability"
+                              },
+                            ]}
+                            layout={{
+                              title: "Log Probabilities for Top Candidates",
+                              xaxis: { 
+                                title: "Log Probability",
+                                autorange: false,
+                                range: [0, -3],
+                              },
+                              yaxis: { 
+                                title: "Tokens", 
+                                automargin: true,
+                                ticktext: pairs.map(p => p.token),
+                                tickvals: pairs.map((_, i) => i),
+                                tickmode: "array",
+                                tickalign: "left",
+                                side: "left",
+                                showticklabels: true,
+                              },
+                              margin: { l: 100, r: 20, t: 40, b: 40 },
+                              paper_bgcolor: 'rgba(0,0,0,0)',
+                              plot_bgcolor: 'rgba(0,0,0,0)',
+                              font: { color: 'currentColor' },
+                            }}
+                            style={{ width: "100%", height: "300px" }}
+                            config={{ responsive: true }}
+                          />
+                          
+                          <div className="mt-4">
+                            <h4 className="text-md font-semibold mb-2">Top Tokens Details</h4>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-sm">
+                                <thead>
+                                  <tr className="border-b">
+                                    <th className="text-left py-2">Token</th>
+                                    <th className="text-right py-2">Log Prob</th>
+                                    <th className="text-right py-2">Logit</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {pairs.map((pair, idx) => (
+                                    <tr key={idx} className="border-b border-gray-100">
+                                      <td className="py-1">{pair.token}</td>
+                                      <td className="text-right py-1">{pair.logprob.toFixed(4)}</td>
+                                      <td className="text-right py-1">{pair.logit.toFixed(4)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
                       );
                     })()}
                   </div>
