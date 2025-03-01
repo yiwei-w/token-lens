@@ -83,9 +83,12 @@ function ColorLegend({
   const colors = generateColorScale(scheme, colorMode);
   
   return (
-    <div className="flex items-center gap-4 p-2 border rounded-md">
-      <div className="flex items-center gap-2">
-        <div className="h-[20px] w-[200px] relative">
+    <div className="flex flex-col w-full">
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-sm font-medium">{label}</span>
+      </div>
+      <div className="flex flex-col">
+        <div className="relative h-[24px] rounded-md overflow-hidden">
           <div className="absolute inset-0 flex">
             {colors.map((color, i) => (
               <div
@@ -96,11 +99,14 @@ function ColorLegend({
             ))}
           </div>
         </div>
-      </div>
-      <div className="flex justify-between items-center gap-4 text-sm min-w-[150px]">
-        <span>{min.toFixed(2)}</span>
-        <span className="font-medium">{label}</span>
-        <span>{max.toFixed(2)}</span>
+        <div className="flex justify-between mt-1">
+          <span className="text-xs font-medium">
+            {min.toFixed(2)}
+          </span>
+          <span className="text-xs font-medium">
+            {max.toFixed(2)}
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -110,7 +116,7 @@ export default function Page() {
   const [prompt, setPrompt] = useState("");
   const [tokens, setTokens] = useState<TokenData[]>([]);
   const [fullText, setFullText] = useState("");
-  const [hoveredToken, setHoveredToken] = useState<TokenData | null>(null);
+  const [selectedToken, setSelectedToken] = useState<TokenData | null>(null);
   const [colorMode, setColorMode] = useState<"prob" | "logprob" | "entropy">("prob");
   const [loading, setLoading] = useState(false);
   const [temperature, setTemperature] = useState(1.0);
@@ -129,11 +135,26 @@ export default function Page() {
       });
       setTokens(response.data.tokens);
       setFullText(response.data.full_text);
-      setHoveredToken(null);
+      setSelectedToken(null);
     } catch (error) {
       console.error("Error generating tokens:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", error.message, error.response?.data);
+      }
     }
     setLoading(false);
+  };
+
+  const copyFullText = () => {
+    const textToCopy = `${prompt}${fullText}`;
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        // You could add a toast notification here if you want
+        console.log('Text copied to clipboard');
+      })
+      .catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
   };
 
   // Compute min and max for the selected color mode
@@ -147,28 +168,36 @@ export default function Page() {
 
   return (
     <div className="p-6 min-h-screen bg-background text-foreground">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">Token Visualization</h1>
         
         <div className="flex flex-col gap-4 mb-6">
-          <div className="flex gap-4">
-            <Input
-              type="text"
-              placeholder="Enter prompt..."
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="promptInput">Prompt</Label>
+            <textarea
+              id="promptInput"
+              placeholder="Enter prompt... (use \n for line breaks)"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="flex-1 text-base"
+              className="flex-1 text-base p-3 min-h-[100px] resize-y border rounded-md bg-background"
+              onKeyDown={(e) => {
+                // Prevent actual newlines, user needs to type \n manually
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                }
+              }}
             />
-            <Button 
-              onClick={generateTokens}
-              disabled={loading}
-              className="bg-black text-white hover:bg-gray-800"
-            >
-              {loading ? "Generating..." : "Generate"}
-            </Button>
           </div>
           
-          <div className="grid grid-cols-3 gap-4">
+          <Button 
+            onClick={generateTokens}
+            disabled={loading}
+            className="bg-black text-white hover:bg-gray-800 w-full md:w-auto md:self-end"
+          >
+            {loading ? "Generating..." : "Generate"}
+          </Button>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="temperature">Temperature</Label>
               <Input
@@ -255,158 +284,201 @@ export default function Page() {
         </div>
 
         <div className="mb-6 space-y-2">
-          <Label htmlFor="colorScheme">Color Scheme</Label>
+          <Label htmlFor="colorScheme">Color Map</Label>
           <div className="flex gap-4 items-start">
             <select
               id="colorScheme"
               value={colorScheme}
               onChange={(e) => setColorScheme(e.target.value as ColorScheme)}
-              className="p-2 border rounded-md bg-background"
+              className="p-2 border rounded-md bg-background h-10 mt-1"
             >
               <option value="blueOrange">Blue-Orange</option>
               <option value="greenRed">Green-Red</option>
             </select>
             
-            <ColorLegend 
-              scheme={colorScheme}
-              min={minVal}
-              max={maxVal}
-              label={colorMode === "prob" ? "Probability" : colorMode === "logprob" ? "Log Probability" : "Entropy"}
-              colorMode={colorMode}
-            />
+            <div className="w-48">
+              <ColorLegend 
+                scheme={colorScheme}
+                min={minVal}
+                max={maxVal}
+                label={colorMode === "prob" ? "Probability" : colorMode === "logprob" ? "Log Probability" : "Entropy"}
+                colorMode={colorMode}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="text-2xl leading-relaxed mb-6 relative">
-          {tokens.map((token, index) => {
-            const value = colorMode === "prob" ? token.prob : colorMode === "logprob" ? token.log_prob : token.entropy;
-            const backgroundColor = mapValueToColor(value, minVal, maxVal, colorScheme, colorMode);
-            return (
-              <div
-                key={index}
-                className="inline-block relative group"
-              >
-                <span
-                  className="mx-1 cursor-pointer rounded px-1"
-                  style={{ 
-                    backgroundColor,
-                    color: 'rgba(255, 255, 255, 0.95)',
-                    textShadow: '0px 0px 2px rgba(0, 0, 0, 0.3)',
-                  }}
-                >
-                  {token.text}
-                </span>
-                <div className="absolute left-0 top-full mt-2 w-[400px] bg-popover text-popover-foreground p-4 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="w-full">
-                    <h3 className="text-lg font-semibold mb-2">
-                      Token: "{token.text}"
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                      <div>
-                        <p className="font-semibold">Log Probability:</p>
-                        <p>{token.log_prob.toFixed(4)}</p>
-                      </div>
-                      <div>
-                        <p className="font-semibold">Entropy:</p>
-                        <p>{token.entropy.toFixed(4)}</p>
-                      </div>
-                      <div>
-                        <p className="font-semibold">Probability:</p>
-                        <p>{token.prob.toFixed(4)}</p>
-                      </div>
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="md:w-1/2">
+            <div className="text-2xl leading-relaxed mb-6 relative font-mono">
+              {tokens.map((token, index) => {
+                const value = colorMode === "prob" ? token.prob : colorMode === "logprob" ? token.log_prob : token.entropy;
+                const backgroundColor = mapValueToColor(value, minVal, maxVal, colorScheme, colorMode);
+                return (
+                  <div
+                    key={index}
+                    className="inline-block relative"
+                  >
+                    <span
+                      className="mx-1 cursor-pointer rounded px-1"
+                      style={{ 
+                        backgroundColor,
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        textShadow: '0px 0px 2px rgba(0, 0, 0, 0.3)',
+                      }}
+                      onClick={() => setSelectedToken(selectedToken === token ? null : token)}
+                    >
+                      {token.text}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {fullText && (
+              <Card className="mt-6">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>Full Generated Text</CardTitle>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={copyFullText}
+                    className="flex items-center gap-1"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="16" 
+                      height="16" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy Full Text
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-2 text-sm text-muted-foreground">
+                    <span className="font-semibold">Prompt:</span> {prompt}
+                  </div>
+                  <p className="font-mono whitespace-pre-wrap">{fullText}</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          <div className="md:w-1/2">
+            {selectedToken ? (
+              <Card className="sticky top-6">
+                <CardHeader>
+                  <CardTitle>Token: "{selectedToken.text}"</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
+                    <div>
+                      <p className="font-semibold">Log Probability:</p>
+                      <p>{selectedToken.log_prob.toFixed(4)}</p>
                     </div>
-                    {(() => {
-                      // Create sorted pairs of tokens with logprobs and logits
-                      const pairs = token.top_tokens.map((t, i) => ({
-                        token: t,
-                        logprob: token.top_logprobs ? token.top_logprobs[i] : 0,
-                        logit: token.top_logits ? token.top_logits[i] : 0
-                      }));
-                      // Sort by logprobs in descending order
-                      pairs.sort((a, b) => b.logprob - a.logprob);
-                      
-                      return (
-                        <div>
-                          <Plot
-                            data={[
-                              {
-                                type: "bar",
-                                x: pairs.map(p => p.logprob),
-                                y: pairs.map(p => p.token),
-                                orientation: "h",
-                                marker: { color: "#1f77b4" },
-                                name: "Log Probability"
-                              },
-                            ]}
-                            layout={{
-                              title: "Log Probabilities for Top Candidates",
-                              xaxis: { 
-                                title: "Log Probability",
-                                autorange: false,
-                                range: [0, -3],
-                              },
-                              yaxis: { 
-                                title: "Tokens", 
-                                automargin: true,
-                                ticktext: pairs.map(p => p.token),
-                                tickvals: pairs.map((_, i) => i),
-                                tickmode: "array",
-                                tickalign: "left",
-                                side: "left",
-                                showticklabels: true,
-                              },
-                              margin: { l: 100, r: 20, t: 40, b: 40 },
-                              paper_bgcolor: 'rgba(0,0,0,0)',
-                              plot_bgcolor: 'rgba(0,0,0,0)',
-                              font: { color: 'currentColor' },
-                            }}
-                            style={{ width: "100%", height: "300px" }}
-                            config={{ responsive: true }}
-                          />
-                          
-                          <div className="mt-4">
-                            <h4 className="text-md font-semibold mb-2">Top Tokens Details</h4>
-                            <div className="overflow-x-auto">
-                              <table className="w-full text-sm">
-                                <thead>
-                                  <tr className="border-b">
-                                    <th className="text-left py-2">Token</th>
-                                    <th className="text-right py-2">Log Prob</th>
-                                    <th className="text-right py-2">Logit</th>
+                    <div>
+                      <p className="font-semibold">Entropy:</p>
+                      <p>{selectedToken.entropy.toFixed(4)}</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Probability:</p>
+                      <p>{selectedToken.prob.toFixed(4)}</p>
+                    </div>
+                  </div>
+                  {(() => {
+                    // Create sorted pairs of tokens with logprobs and logits
+                    const pairs = selectedToken.top_tokens.map((t, i) => ({
+                      token: t,
+                      logprob: selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0,
+                      logit: selectedToken.top_logits ? selectedToken.top_logits[i] : 0
+                    }));
+                    // Sort by logprobs in descending order
+                    pairs.sort((a, b) => b.logprob - a.logprob);
+                    
+                    return (
+                      <div>
+                        <Plot
+                          data={[
+                            {
+                              type: "bar",
+                              x: pairs.map(p => p.logprob),
+                              y: pairs.map(p => p.token),
+                              orientation: "h",
+                              marker: { color: "#1f77b4" },
+                              name: "Log Probability"
+                            },
+                          ]}
+                          layout={{
+                            title: "Log Probabilities for Top Candidates",
+                            xaxis: { 
+                              title: "Log Probability",
+                              autorange: false,
+                              range: [0, -3],
+                            },
+                            yaxis: { 
+                              title: "Tokens", 
+                              automargin: true,
+                              ticktext: pairs.map(p => p.token),
+                              tickvals: pairs.map((_, i) => i),
+                              tickmode: "array",
+                              tickalign: "left",
+                              side: "left",
+                              showticklabels: true,
+                            },
+                            margin: { l: 100, r: 20, t: 40, b: 40 },
+                            paper_bgcolor: 'rgba(0,0,0,0)',
+                            plot_bgcolor: 'rgba(0,0,0,0)',
+                            font: { color: 'currentColor' },
+                          }}
+                          style={{ width: "100%", height: "300px" }}
+                          config={{ responsive: true }}
+                        />
+                        
+                        <div className="mt-4">
+                          <h4 className="text-md font-semibold mb-2">Top Tokens Details</h4>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                              <thead>
+                                <tr className="border-b">
+                                  <th className="text-left py-2">Token</th>
+                                  <th className="text-right py-2">Log Prob</th>
+                                  <th className="text-right py-2">Logit</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {pairs.map((pair, idx) => (
+                                  <tr key={idx} className="border-b border-gray-100">
+                                    <td className="py-1">{pair.token}</td>
+                                    <td className="text-right py-1">{pair.logprob.toFixed(4)}</td>
+                                    <td className="text-right py-1">{pair.logit.toFixed(4)}</td>
                                   </tr>
-                                </thead>
-                                <tbody>
-                                  {pairs.map((pair, idx) => (
-                                    <tr key={idx} className="border-b border-gray-100">
-                                      <td className="py-1">{pair.token}</td>
-                                      <td className="text-right py-1">{pair.logprob.toFixed(4)}</td>
-                                      <td className="text-right py-1">{pair.logit.toFixed(4)}</td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
+                                ))}
+                              </tbody>
+                            </table>
                           </div>
                         </div>
-                      );
-                    })()}
-                  </div>
-                </div>
+                      </div>
+                    );
+                  })()}
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="h-full flex items-center justify-center p-8 border border-dashed rounded-lg">
+                <p className="text-muted-foreground text-center">
+                  Click on a token to view detailed statistics
+                </p>
               </div>
-            );
-          })}
+            )}
+          </div>
         </div>
-
-        {fullText && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Full Generated Text</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="font-mono whitespace-pre-wrap">{fullText}</p>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
   );

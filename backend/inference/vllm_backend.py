@@ -17,7 +17,7 @@ class VLLMBackend(InferenceBackend):
         sampling_params = SamplingParams(
             temperature=temperature,
             max_tokens=max_new_tokens,
-            top_k=top_k,
+            top_k=-1,
             logprobs=top_k,  # Request logprobs for top_k tokens
         )
         
@@ -37,17 +37,46 @@ class VLLMBackend(InferenceBackend):
                 for i, token_logprobs in enumerate(output.outputs[0].logprobs):
                     if not token_logprobs:  # Skip if no logprobs for this token
                         continue
-                        
-                    # Get token text - we'll use the top token from logprobs
-                    sorted_logprobs = sorted(token_logprobs.items(), key=lambda x: x[1], reverse=True)
-                    token_text = sorted_logprobs[0][0]
+                    
+                    # Convert Logprob objects to float values if needed
+                    float_logprobs = {}
+                    for token, logprob in token_logprobs.items():
+                        # Check if logprob is a Logprob object
+                        if hasattr(logprob, 'logprob'):
+                            # It's a Logprob object, extract the logprob value
+                            float_logprobs[token] = logprob.logprob
+                        else:
+                            # It's already a float or something else
+                            float_logprobs[token] = float(logprob)
+                    
+                    # Sort using the float values
+                    sorted_logprobs = sorted(float_logprobs.items(), key=lambda x: x[1], reverse=True)
+                    
+                    # Get token ID and decode it to text
+                    token_id = sorted_logprobs[0][0]
+                    # Check if token_id is a string representation of an integer
+                    if isinstance(token_id, str) and token_id.isdigit():
+                        token_id = int(token_id)
+                    # Decode the token ID to get the actual text
+                    try:
+                        token_text = self.tokenizer.decode([token_id]) if isinstance(token_id, int) else token_id
+                    except:
+                        # Fallback if decoding fails
+                        token_text = str(token_id)
                     
                     # Extract top tokens and their logprobs
                     top_tokens = []
                     top_logprobs_values = []
                     
                     for token, logprob in sorted_logprobs[:top_k]:
-                        top_tokens.append(token)
+                        # Decode token if it's an ID
+                        if isinstance(token, str) and token.isdigit():
+                            token = int(token)
+                        try:
+                            decoded_token = self.tokenizer.decode([token]) if isinstance(token, int) else token
+                            top_tokens.append(decoded_token)
+                        except:
+                            top_tokens.append(str(token))
                         top_logprobs_values.append(logprob)
                     
                     # Calculate probability and entropy
