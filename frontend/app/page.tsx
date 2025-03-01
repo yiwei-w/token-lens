@@ -165,6 +165,10 @@ export default function Page() {
       });
   };
 
+  const sendToInput = () => {
+    setPrompt(`${prompt}${fullText}`);
+  };
+
   // Compute min and max for the selected color mode
   const values = tokens.map((t) => {
     if (colorMode === "prob") return t.prob;
@@ -356,28 +360,52 @@ export default function Page() {
               <Card className="mt-6">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Full Generated Text</CardTitle>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={copyFullText}
-                    className="flex items-center gap-1"
-                  >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      width="16" 
-                      height="16" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={sendToInput}
+                      className="flex items-center gap-1"
                     >
-                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                    Copy Full Text
-                  </Button>
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="16" 
+                        height="16" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      >
+                        <path d="M5 12h14"></path>
+                        <path d="M12 5v14"></path>
+                      </svg>
+                      Continue from this
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={copyFullText}
+                      className="flex items-center gap-1"
+                    >
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="16" 
+                        height="16" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                      >
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      Copy full text
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="mb-2 text-sm text-muted-foreground">
