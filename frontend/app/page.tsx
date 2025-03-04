@@ -113,11 +113,27 @@ function ColorLegend({
 }
 
 function formatWhitespaceToken(text: string): string {
-  if (text === '\n') return '\\n';
-  if (text === '\t') return '\\t';
-  if (text === ' ') return '␣'; // Space character
-  if (text === '\r') return '\\r';
-  return text;
+  if (!text) return ''; // Handle empty strings
+  
+  // Replace all whitespace characters with visible representations
+  let result = '';
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    switch (char) {
+      case '\n': result += '\\n'; break;
+      case '\t': result += '\\t'; break;
+      case ' ': result += '␣'; break;
+      case '\r': result += '\\r'; break;
+      case '\f': result += '\\f'; break; // Form feed
+      case '\v': result += '\\v'; break; // Vertical tab
+      case '\u00A0': result += '\\u00A0'; break; // Non-breaking space
+      case '\u2028': result += '\\u2028'; break; // Line separator
+      case '\u2029': result += '\\u2029'; break; // Paragraph separator
+      default: result += char;
+    }
+  }
+  
+  return result;
 }
 
 export default function Page() {
@@ -322,17 +338,13 @@ export default function Page() {
 
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-1/2">
-            <div className="text-2xl leading-relaxed mb-6 relative font-mono">
+            <div className="text-2xl leading-relaxed mb-6 relative" style={{ fontFamily: 'Iosevka, monospace' }}>
               {tokens.map((token, index) => {
                 const value = colorMode === "prob" ? token.prob : colorMode === "logprob" ? token.log_prob : token.entropy;
                 const backgroundColor = mapValueToColor(value, minVal, maxVal, colorScheme, colorMode);
                 
                 // Format whitespace characters for display
-                let displayText = token.text;
-                if (displayText === '\n') displayText = '\\n';
-                else if (displayText === '\t') displayText = '\\t';
-                else if (displayText === ' ') displayText = '␣'; // Space character
-                else if (displayText === '\r') displayText = '\\r';
+                let displayText = formatWhitespaceToken(token.text);
                 
                 return (
                   <div

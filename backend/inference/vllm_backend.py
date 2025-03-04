@@ -1,5 +1,6 @@
 # backend/inference/vllm_backend.py
 import numpy as np
+import base64
 from vllm import LLM, SamplingParams
 from . import InferenceBackend
 
@@ -12,6 +13,12 @@ class VLLMBackend(InferenceBackend):
         # Get the tokenizer from the LLM for token decoding
         self.tokenizer = self.llm.get_tokenizer()
         # assert self.tokenizer.vocab_size == 151936, f"Vocab size is not 151643, but {self.tokenizer.vocab_size}"
+        
+    def get_token(self, token_id):
+        # This is a direct approach - get the raw string representation of the token
+        text = self.tokenizer.decode([token_id], clean_up_tokenization_spaces=False)
+        return text
+        
 
     def generate(self, prompt: str, temperature: float, max_new_tokens: int, top_k: int) -> dict:
         # Configure sampling parameters
@@ -56,7 +63,7 @@ class VLLMBackend(InferenceBackend):
                     # Get the actual token that was sampled by the model
                     if i < len(generated_token_ids):
                         selected_token_id = generated_token_ids[i]
-                        selected_token_text = self.tokenizer.decode([selected_token_id])
+                        selected_token_text = self.get_token(selected_token_id)
                     
                     
                     
@@ -65,7 +72,8 @@ class VLLMBackend(InferenceBackend):
                     top_logprobs_values = []
                     
                     for token_id, logprob in sorted_logprobs[:top_k]:
-                        decoded_token = self.tokenizer.decode([token_id])
+                        # Use our safe decoding method for all tokens
+                        decoded_token = self.get_token(token_id)
                         top_tokens.append(decoded_token)
                         top_logprobs_values.append(logprob)
                     
