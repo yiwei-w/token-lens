@@ -127,8 +127,8 @@ export default function Page() {
   const [selectedToken, setSelectedToken] = useState<TokenData | null>(null);
   const [colorMode, setColorMode] = useState<"prob" | "logprob" | "entropy">("prob");
   const [loading, setLoading] = useState(false);
-  const [temperature, setTemperature] = useState(1.0);
-  const [maxNewTokens, setMaxNewTokens] = useState(30);
+  const [temperature, setTemperature] = useState(0.6);
+  const [maxNewTokens, setMaxNewTokens] = useState(1024);
   const [topK, setTopK] = useState(5);
   const [colorScheme, setColorScheme] = useState<ColorScheme>("blueOrange");
 
@@ -440,12 +440,18 @@ export default function Page() {
                   </div>
                   {(() => {
                     // Create sorted pairs of tokens with logprobs and logits
-                    const pairs = selectedToken.top_tokens.map((t, i) => ({
-                      token: formatWhitespaceToken(t),
-                      logprob: selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0,
-                      prob: Math.exp(selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0),
-                      logit: selectedToken.top_logits ? selectedToken.top_logits[i] : 0
-                    }));
+                    const pairs = selectedToken.top_tokens.map((t, i) => {
+                      const formattedToken = formatWhitespaceToken(t);
+                      return {
+                        // Raw token value without quotes for the plot
+                        token: formattedToken,
+                        // Formatted token with quotes for the table display
+                        displayToken: `"${formattedToken}"`,
+                        logprob: selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0,
+                        prob: Math.exp(selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0),
+                        logit: selectedToken.top_logits ? selectedToken.top_logits[i] : 0
+                      };
+                    });
                     // Sort by logprobs in descending order
                     pairs.sort((a, b) => b.logprob - a.logprob);
                     
@@ -458,33 +464,66 @@ export default function Page() {
                               x: pairs.map(p => p.prob),
                               y: pairs.map(p => p.token),
                               orientation: "h",
-                              marker: { color: "#1f77b4" },
-                              name: "Probability"
+                              marker: { 
+                                color: "hsl(215, 100%, 50%)", // Match the blue theme
+                                line: {
+                                  width: 0,
+                                }
+                              },
+                              hovertemplate: '%{y}: %{x:.4f}<extra></extra>', // Clean hover template
+                              showlegend: false
                             },
                           ]}
                           layout={{
-                            title: "Probabilities for Top Candidates",
+                            title: {
+                              text: "Token Probabilities",
+                              font: {
+                                family: "system-ui, sans-serif",
+                                size: 16,
+                              }
+                            },
                             xaxis: { 
-                              title: "Probability",
+                              title: {
+                                text: "Probability",
+                                font: {
+                                  family: "system-ui, sans-serif",
+                                  size: 14,
+                                }
+                              },
                               autorange: true,
+                              showgrid: true,
+                              gridcolor: "rgba(0,0,0,0.05)",
+                              zeroline: false,
                             },
                             yaxis: { 
-                              title: "Tokens", 
+                              // No title for y-axis as requested
                               automargin: true,
-                              ticktext: pairs.map(p => p.token),
-                              tickvals: pairs.map((_, i) => i),
-                              tickmode: "array",
-                              tickalign: "left",
-                              side: "left",
-                              showticklabels: true,
+                              type: "category",
+                              categoryorder: "array",
+                              categoryarray: pairs.map(p => p.token).reverse(),
+                              tickfont: {
+                                family: "monospace",
+                                size: 12,
+                              },
                             },
-                            margin: { l: 100, r: 20, t: 40, b: 40 },
+                            margin: { l: 100, r: 20, t: 50, b: 40 },
                             paper_bgcolor: 'rgba(0,0,0,0)',
                             plot_bgcolor: 'rgba(0,0,0,0)',
-                            font: { color: 'currentColor' },
+                            font: { 
+                              family: "system-ui, sans-serif",
+                              color: 'currentColor' 
+                            },
+                            bargap: 0.2,
+                            hoverlabel: {
+                              bgcolor: "white",
+                              font: { family: "monospace" }
+                            }
                           }}
-                          style={{ width: "100%", height: "300px" }}
-                          config={{ responsive: true }}
+                          style={{ width: "100%", height: "300px", borderRadius: "8px" }}
+                          config={{ 
+                            responsive: true,
+                            displayModeBar: false // Remove the mode bar for cleaner look
+                          }}
                         />
                         
                         <div className="mt-4">
