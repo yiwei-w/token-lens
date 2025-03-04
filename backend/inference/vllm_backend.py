@@ -18,8 +18,7 @@ class VLLMBackend(InferenceBackend):
         # This is a direct approach - get the raw string representation of the token
         text = self.tokenizer.decode([token_id], clean_up_tokenization_spaces=False)
         return text
-        
-
+    
     def generate(self, prompt: str, temperature: float, max_new_tokens: int, top_k: int) -> dict:
         # Configure sampling parameters
         sampling_params = SamplingParams(
