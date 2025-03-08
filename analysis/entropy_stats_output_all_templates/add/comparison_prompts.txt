@@ -1,0 +1,900 @@
+Compare sqrt(1) + sqrt(50) and sqrt(3) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(34) and sqrt(24) + sqrt(29). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(39) and sqrt(11) + sqrt(20). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(17) and sqrt(10) + sqrt(16). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(49) and sqrt(37) + sqrt(45). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(48) and sqrt(24) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(46) and sqrt(13) + sqrt(26). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(42) and sqrt(7) + sqrt(26). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(44) and sqrt(16) + sqrt(43). Which is larger?
+<think>
+
+Compare sqrt(10) + sqrt(48) and sqrt(27) + sqrt(40). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(45) and sqrt(22) + sqrt(27). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(47) and sqrt(35) + sqrt(44). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(47) and sqrt(30) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(20) + sqrt(44) and sqrt(25) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(39) and sqrt(17) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(46) and sqrt(21) + sqrt(43). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(46) and sqrt(13) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(36) and sqrt(13) + sqrt(27). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(32) and sqrt(12) + sqrt(21). Which is larger?
+<think>
+
+Compare sqrt(12) + sqrt(49) and sqrt(13) + sqrt(45). Which is larger?
+<think>
+
+Compare sqrt(10) + sqrt(46) and sqrt(19) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(10) + sqrt(49) and sqrt(13) + sqrt(24). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(48) and sqrt(35) + sqrt(38). Which is larger?
+<think>
+
+Compare sqrt(25) + sqrt(50) and sqrt(29) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(18) and sqrt(15) + sqrt(16). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(45) and sqrt(11) + sqrt(18). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(22) and sqrt(15) + sqrt(16). Which is larger?
+<think>
+
+Compare sqrt(43) + sqrt(48) and sqrt(44) + sqrt(47). Which is larger?
+<think>
+
+Compare sqrt(26) + sqrt(48) and sqrt(28) + sqrt(38). Which is larger?
+<think>
+
+Compare sqrt(10) + sqrt(19) and sqrt(13) + sqrt(14). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(31) and sqrt(23) + sqrt(27). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(34) and sqrt(13) + sqrt(24). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(50) and sqrt(11) + sqrt(46). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(25) and sqrt(7) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(37) and sqrt(19) + sqrt(31). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(34) and sqrt(31) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(45) and sqrt(29) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(18) + sqrt(45) and sqrt(43) + sqrt(44). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(47) and sqrt(42) + sqrt(44). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(43) and sqrt(24) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(18) + sqrt(50) and sqrt(23) + sqrt(42). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(46) and sqrt(29) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(26) and sqrt(18) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(46) and sqrt(20) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(38) and sqrt(15) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(48) and sqrt(23) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(41) and sqrt(18) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(32) and sqrt(22) + sqrt(25). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(46) and sqrt(18) + sqrt(19). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(49) and sqrt(14) + sqrt(29). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(30) and sqrt(18) + sqrt(25). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(27) and sqrt(12) + sqrt(16). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(43) and sqrt(17) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(50) and sqrt(21) + sqrt(44). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(48) and sqrt(35) + sqrt(44). Which is larger?
+<think>
+
+Compare sqrt(17) + sqrt(50) and sqrt(30) + sqrt(45). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(42) and sqrt(22) + sqrt(27). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(47) and sqrt(6) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(35) and sqrt(28) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(31) and sqrt(15) + sqrt(19). Which is larger?
+<think>
+
+Compare sqrt(18) + sqrt(45) and sqrt(26) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(43) and sqrt(14) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(47) and sqrt(14) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(44) and sqrt(29) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(24) + sqrt(38) and sqrt(31) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(24) and sqrt(8) + sqrt(20). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(48) and sqrt(21) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(20) + sqrt(38) and sqrt(28) + sqrt(29). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(36) and sqrt(18) + sqrt(19). Which is larger?
+<think>
+
+Compare sqrt(17) + sqrt(48) and sqrt(35) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(26) + sqrt(42) and sqrt(30) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(15) and sqrt(6) + sqrt(14). Which is larger?
+<think>
+
+Compare sqrt(22) + sqrt(45) and sqrt(23) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(46) and sqrt(21) + sqrt(42). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(50) and sqrt(23) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(15) + sqrt(32) and sqrt(18) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(40) and sqrt(16) + sqrt(31). Which is larger?
+<think>
+
+Compare sqrt(18) + sqrt(42) and sqrt(35) + sqrt(40). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(44) and sqrt(17) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(46) and sqrt(15) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(17) + sqrt(49) and sqrt(33) + sqrt(47). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(49) and sqrt(20) + sqrt(44). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(41) and sqrt(16) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(48) and sqrt(27) + sqrt(43). Which is larger?
+<think>
+
+Compare sqrt(21) + sqrt(43) and sqrt(22) + sqrt(40). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(37) and sqrt(10) + sqrt(20). Which is larger?
+<think>
+
+Compare sqrt(32) + sqrt(50) and sqrt(34) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(32) + sqrt(49) and sqrt(40) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(44) and sqrt(15) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(38) and sqrt(24) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(10) + sqrt(48) and sqrt(18) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(22) + sqrt(43) and sqrt(25) + sqrt(40). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(49) and sqrt(38) + sqrt(44). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(31) and sqrt(6) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(43) and sqrt(13) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(21) + sqrt(42) and sqrt(30) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(39) and sqrt(17) + sqrt(23). Which is larger?
+<think>
+
+Compare sqrt(20) + sqrt(49) and sqrt(25) + sqrt(27). Which is larger?
+<think>
+
+Compare sqrt(20) + sqrt(43) and sqrt(26) + sqrt(42). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(38) and sqrt(12) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(49) and sqrt(18) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(21) and sqrt(8) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(20) + sqrt(43) and sqrt(30) + sqrt(42). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(39) and sqrt(23) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(15) + sqrt(35) and sqrt(27) + sqrt(29). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(37) and sqrt(25) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(28) and sqrt(13) + sqrt(24). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(45) and sqrt(38) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(32) + sqrt(46) and sqrt(36) + sqrt(43). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(48) and sqrt(28) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(39) and sqrt(17) + sqrt(21). Which is larger?
+<think>
+
+Compare sqrt(12) + sqrt(47) and sqrt(28) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(30) and sqrt(17) + sqrt(25). Which is larger?
+<think>
+
+Compare sqrt(10) + sqrt(46) and sqrt(14) + sqrt(45). Which is larger?
+<think>
+
+Compare sqrt(27) + sqrt(49) and sqrt(32) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(47) and sqrt(11) + sqrt(30). Which is larger?
+<think>
+
+Compare sqrt(13) + sqrt(43) and sqrt(38) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(45) and sqrt(20) + sqrt(30). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(40) and sqrt(20) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(29) and sqrt(16) + sqrt(18). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(49) and sqrt(6) + sqrt(16). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(26) and sqrt(11) + sqrt(14). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(44) and sqrt(22) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(50) and sqrt(20) + sqrt(45). Which is larger?
+<think>
+
+Compare sqrt(19) + sqrt(47) and sqrt(28) + sqrt(45). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(47) and sqrt(20) + sqrt(43). Which is larger?
+<think>
+
+Compare sqrt(10) + sqrt(49) and sqrt(14) + sqrt(18). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(45) and sqrt(20) + sqrt(43). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(31) and sqrt(15) + sqrt(25). Which is larger?
+<think>
+
+Compare sqrt(18) + sqrt(49) and sqrt(25) + sqrt(27). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(43) and sqrt(21) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(42) and sqrt(15) + sqrt(30). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(43) and sqrt(20) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(36) and sqrt(8) + sqrt(25). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(26) and sqrt(16) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(12) + sqrt(50) and sqrt(15) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(21) + sqrt(49) and sqrt(36) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(44) and sqrt(37) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(15) + sqrt(45) and sqrt(36) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(24) and sqrt(14) + sqrt(23). Which is larger?
+<think>
+
+Compare sqrt(13) + sqrt(46) and sqrt(42) + sqrt(45). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(37) and sqrt(14) + sqrt(18). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(49) and sqrt(5) + sqrt(21). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(45) and sqrt(30) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(12) + sqrt(30) and sqrt(18) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(38) and sqrt(26) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(28) and sqrt(9) + sqrt(10). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(45) and sqrt(31) + sqrt(42). Which is larger?
+<think>
+
+Compare sqrt(18) + sqrt(41) and sqrt(25) + sqrt(30). Which is larger?
+<think>
+
+Compare sqrt(12) + sqrt(24) and sqrt(15) + sqrt(19). Which is larger?
+<think>
+
+Compare sqrt(23) + sqrt(48) and sqrt(28) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(46) and sqrt(13) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(36) and sqrt(18) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(19) + sqrt(48) and sqrt(29) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(40) and sqrt(30) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(46) and sqrt(19) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(42) and sqrt(10) + sqrt(18). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(48) and sqrt(12) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(50) and sqrt(35) + sqrt(49). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(47) and sqrt(16) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(47) and sqrt(13) + sqrt(16). Which is larger?
+<think>
+
+Compare sqrt(12) + sqrt(42) and sqrt(18) + sqrt(29). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(42) and sqrt(28) + sqrt(30). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(49) and sqrt(18) + sqrt(38). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(38) and sqrt(5) + sqrt(15). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(37) and sqrt(16) + sqrt(26). Which is larger?
+<think>
+
+Compare sqrt(18) + sqrt(47) and sqrt(21) + sqrt(38). Which is larger?
+<think>
+
+Compare sqrt(17) + sqrt(30) and sqrt(18) + sqrt(20). Which is larger?
+<think>
+
+Compare sqrt(15) + sqrt(40) and sqrt(27) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(47) and sqrt(16) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(42) and sqrt(34) + sqrt(40). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(40) and sqrt(13) + sqrt(16). Which is larger?
+<think>
+
+Compare sqrt(13) + sqrt(47) and sqrt(45) + sqrt(46). Which is larger?
+<think>
+
+Compare sqrt(15) + sqrt(48) and sqrt(35) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(43) and sqrt(6) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(48) and sqrt(18) + sqrt(31). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(49) and sqrt(30) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(25) + sqrt(39) and sqrt(30) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(44) and sqrt(16) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(37) and sqrt(27) + sqrt(31). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(48) and sqrt(31) + sqrt(43). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(47) and sqrt(13) + sqrt(15). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(26) and sqrt(15) + sqrt(21). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(38) and sqrt(6) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(49) and sqrt(3) + sqrt(42). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(44) and sqrt(10) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(46) and sqrt(20) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(10) + sqrt(46) and sqrt(30) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(44) and sqrt(15) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(49) and sqrt(30) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(27) + sqrt(45) and sqrt(29) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(28) + sqrt(41) and sqrt(32) + sqrt(38). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(43) and sqrt(13) + sqrt(15). Which is larger?
+<think>
+
+Compare sqrt(25) + sqrt(48) and sqrt(43) + sqrt(44). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(36) and sqrt(20) + sqrt(26). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(37) and sqrt(6) + sqrt(16). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(49) and sqrt(40) + sqrt(48). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(24) and sqrt(20) + sqrt(23). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(44) and sqrt(28) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(17) + sqrt(48) and sqrt(29) + sqrt(31). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(32) and sqrt(24) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(29) + sqrt(47) and sqrt(33) + sqrt(40). Which is larger?
+<think>
+
+Compare sqrt(19) + sqrt(46) and sqrt(30) + sqrt(45). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(50) and sqrt(15) + sqrt(43). Which is larger?
+<think>
+
+Compare sqrt(13) + sqrt(46) and sqrt(37) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(33) and sqrt(5) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(12) + sqrt(31) and sqrt(22) + sqrt(29). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(23) and sqrt(9) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(34) + sqrt(49) and sqrt(38) + sqrt(47). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(36) and sqrt(5) + sqrt(11). Which is larger?
+<think>
+
+Compare sqrt(18) + sqrt(50) and sqrt(42) + sqrt(49). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(45) and sqrt(10) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(25) + sqrt(50) and sqrt(27) + sqrt(38). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(50) and sqrt(26) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(35) and sqrt(14) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(42) and sqrt(7) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(25) and sqrt(10) + sqrt(15). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(17) and sqrt(8) + sqrt(9). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(37) and sqrt(26) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(35) and sqrt(21) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(22) and sqrt(8) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(31) and sqrt(8) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(39) and sqrt(13) + sqrt(19). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(49) and sqrt(28) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(50) and sqrt(27) + sqrt(30). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(30) and sqrt(14) + sqrt(27). Which is larger?
+<think>
+
+Compare sqrt(19) + sqrt(41) and sqrt(24) + sqrt(40). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(42) and sqrt(39) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(32) and sqrt(17) + sqrt(23). Which is larger?
+<think>
+
+Compare sqrt(21) + sqrt(47) and sqrt(28) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(19) + sqrt(43) and sqrt(26) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(23) + sqrt(30) and sqrt(27) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(18) and sqrt(4) + sqrt(9). Which is larger?
+<think>
+
+Compare sqrt(19) + sqrt(45) and sqrt(21) + sqrt(26). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(49) and sqrt(16) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(10) + sqrt(45) and sqrt(16) + sqrt(42). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(38) and sqrt(7) + sqrt(20). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(43) and sqrt(27) + sqrt(38). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(50) and sqrt(7) + sqrt(49). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(29) and sqrt(16) + sqrt(18). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(31) and sqrt(23) + sqrt(25). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(45) and sqrt(22) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(35) and sqrt(15) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(43) and sqrt(18) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(35) and sqrt(29) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(16) + sqrt(49) and sqrt(18) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(12) + sqrt(49) and sqrt(31) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(26) and sqrt(15) + sqrt(19). Which is larger?
+<think>
+
+Compare sqrt(27) + sqrt(43) and sqrt(30) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(25) + sqrt(45) and sqrt(26) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(36) and sqrt(6) + sqrt(27). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(19) and sqrt(7) + sqrt(15). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(33) and sqrt(6) + sqrt(12). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(24) and sqrt(16) + sqrt(19). Which is larger?
+<think>
+
+Compare sqrt(18) + sqrt(45) and sqrt(22) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(41) and sqrt(12) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(50) and sqrt(34) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(50) and sqrt(15) + sqrt(42). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(36) and sqrt(16) + sqrt(30). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(38) and sqrt(19) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(17) + sqrt(37) and sqrt(21) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(26) + sqrt(47) and sqrt(43) + sqrt(44). Which is larger?
+<think>
+
+Compare sqrt(20) + sqrt(43) and sqrt(27) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(33) and sqrt(15) + sqrt(24). Which is larger?
+<think>
+
+Compare sqrt(28) + sqrt(50) and sqrt(30) + sqrt(31). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(41) and sqrt(10) + sqrt(11). Which is larger?
+<think>
+
+Compare sqrt(20) + sqrt(41) and sqrt(33) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(40) and sqrt(38) + sqrt(39). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(15) and sqrt(10) + sqrt(13). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(32) and sqrt(27) + sqrt(31). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(41) and sqrt(22) + sqrt(40). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(16) and sqrt(11) + sqrt(12). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(40) and sqrt(11) + sqrt(30). Which is larger?
+<think>
+
+Compare sqrt(12) + sqrt(40) and sqrt(20) + sqrt(37). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(33) and sqrt(17) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(49) and sqrt(6) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(39) and sqrt(21) + sqrt(32). Which is larger?
+<think>
+
+Compare sqrt(14) + sqrt(30) and sqrt(21) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(39) and sqrt(33) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(3) + sqrt(35) and sqrt(23) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(45) and sqrt(19) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(41) and sqrt(11) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(6) + sqrt(43) and sqrt(19) + sqrt(33). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(31) and sqrt(10) + sqrt(16). Which is larger?
+<think>
+
+Compare sqrt(11) + sqrt(36) and sqrt(28) + sqrt(29). Which is larger?
+<think>
+
+Compare sqrt(26) + sqrt(44) and sqrt(33) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(13) + sqrt(30) and sqrt(20) + sqrt(23). Which is larger?
+<think>
+
+Compare sqrt(20) + sqrt(46) and sqrt(29) + sqrt(35). Which is larger?
+<think>
+
+Compare sqrt(29) + sqrt(48) and sqrt(36) + sqrt(46). Which is larger?
+<think>
+
+Compare sqrt(1) + sqrt(36) and sqrt(8) + sqrt(28). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(43) and sqrt(31) + sqrt(36). Which is larger?
+<think>
+
+Compare sqrt(8) + sqrt(28) and sqrt(19) + sqrt(22). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(35) and sqrt(13) + sqrt(29). Which is larger?
+<think>
+
+Compare sqrt(9) + sqrt(43) and sqrt(30) + sqrt(34). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(25) and sqrt(12) + sqrt(17). Which is larger?
+<think>
+
+Compare sqrt(4) + sqrt(48) and sqrt(21) + sqrt(38). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(36) and sqrt(16) + sqrt(29). Which is larger?
+<think>
+
+Compare sqrt(2) + sqrt(48) and sqrt(8) + sqrt(41). Which is larger?
+<think>
+
+Compare sqrt(5) + sqrt(35) and sqrt(22) + sqrt(27). Which is larger?
+<think>
+
+Compare sqrt(7) + sqrt(49) and sqrt(32) + sqrt(41). Which is larger?
+<think>
+
