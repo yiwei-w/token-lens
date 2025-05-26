@@ -152,8 +152,9 @@ class VLLMBackend(InferenceBackend):
                 sampling_params = SamplingParams(
                     temperature=temperature,
                     max_tokens=1,  # Generate only one token at a time
-                    top_k=-1,
+                    top_k=top_k if top_k > 0 else -1,
                     top_p=top_p,
+                    min_p=min_p if min_p > 0.0 else 0.0,
                     logprobs=500,  # Get logprobs for entropy calculation
                 )
                 
@@ -164,22 +165,10 @@ class VLLMBackend(InferenceBackend):
                     continue
                 
                 token_logprobs = output.outputs[0].logprobs[0]
-                float_logprobs = {token_id: logprob.logprob for token_id, logprob in token_logprobs.items()}
                 
-                # Filter tokens based on min_p and top_k
-                sorted_logprobs = sorted(float_logprobs.items(), key=lambda x: x[1], reverse=True)
-                
-                # Apply top_k filtering
-                if top_k > 0:
-                    sorted_logprobs = sorted_logprobs[:top_k]
-                
-                # Apply min_p filtering
-                if min_p > 0.0:
-                    max_logprob = sorted_logprobs[0][1] if sorted_logprobs else float('-inf')
-                    min_logprob_threshold = max_logprob + np.log(min_p)
-                    filtered_logprobs = [(token_id, logprob) for token_id, logprob in sorted_logprobs if logprob >= min_logprob_threshold]
-                else:
-                    filtered_logprobs = sorted_logprobs
+                # vLLM has already applied top_k, top_p, min_p filtering
+                # Just use the returned logprobs directly
+                filtered_logprobs = [(token_id, logprob.logprob) for token_id, logprob in token_logprobs.items()]
                 
                 if not filtered_logprobs:
                     continue
@@ -207,6 +196,10 @@ class VLLMBackend(InferenceBackend):
                     token_text = self.get_token(token_id)
                     token_prob = probs[i]  # Use normalized probability
                     token_logprob = normalized_logprobs[i]  # Use normalized log prob
+                    
+                    # Skip tokens with zero probability (which have -inf log prob)
+                    if token_prob == 0.0 or np.isinf(token_logprob):
+                        continue
                     
                     child_node = {
                         "id": node_id_counter,
