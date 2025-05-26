@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack -p 3030",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -15,10 +15,12 @@
     "@radix-ui/react-slot": "^1.1.2",
     "@tailwindcss/postcss": "^4.0.8",
     "@tippyjs/react": "^4.2.6",
+    "@types/d3": "^7.4.3",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "d3": "^7.9.0",
     "lucide-react": "^0.475.0",
     "next": "^15.1.7",
     "plotly.js": "^3.0.1",

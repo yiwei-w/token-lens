@@ -3,6 +3,7 @@ import numpy as np
 import base64
 from vllm import LLM, SamplingParams
 from . import InferenceBackend
+from typing import Dict, List, Any
 
 
 class VLLMBackend(InferenceBackend):
@@ -114,4 +115,114 @@ class VLLMBackend(InferenceBackend):
             return {
                 "full_text": f"Error during generation: {error_msg}",
                 "tokens": []
-            } 
+            }
+    
+    def generate_tree(self, prompt: str, temperature: float, max_depth: int, top_k: int, top_p: float, min_p: float) -> dict:
+        """Generate a tree of possible completions by exploring multiple paths at each step."""
+        try:
+            tree_nodes = []
+            node_id_counter = 0
+            
+            # Root node represents the initial prompt
+            root_node = {
+                "id": node_id_counter,
+                "parent_id": None,
+                "text": "",
+                "prob": 1.0,
+                "log_prob": 0.0,
+                "entropy": 0.0,
+                "depth": 0,
+                "cumulative_text": "",
+                "full_prompt": prompt,
+                "children": []
+            }
+            tree_nodes.append(root_node)
+            node_id_counter += 1
+            
+            # Queue for breadth-first exploration: (node_id, current_prompt, depth)
+            exploration_queue = [(0, prompt, 0)]
+            
+            while exploration_queue and max(node["depth"] for node in tree_nodes) < max_depth:
+                current_node_id, current_prompt, current_depth = exploration_queue.pop(0)
+                
+                if current_depth >= max_depth:
+                    continue
+                
+                # Generate one step from current prompt
+                sampling_params = SamplingParams(
+                    temperature=temperature,
+                    max_tokens=1,  # Generate only one token at a time
+                    top_k=-1,
+                    top_p=top_p,
+                    logprobs=500,  # Get logprobs for entropy calculation
+                )
+                
+                outputs = self.llm.generate(current_prompt, sampling_params)
+                output = outputs[0]
+                
+                if not (hasattr(output.outputs[0], 'logprobs') and output.outputs[0].logprobs and output.outputs[0].logprobs[0]):
+                    continue
+                
+                token_logprobs = output.outputs[0].logprobs[0]
+                float_logprobs = {token_id: logprob.logprob for token_id, logprob in token_logprobs.items()}
+                
+                # Filter tokens based on min_p and top_k
+                sorted_logprobs = sorted(float_logprobs.items(), key=lambda x: x[1], reverse=True)
+                
+                # Apply top_k filtering
+                if top_k > 0:
+                    sorted_logprobs = sorted_logprobs[:top_k]
+                
+                # Apply min_p filtering
+                max_logprob = sorted_logprobs[0][1] if sorted_logprobs else float('-inf')
+                min_logprob_threshold = max_logprob + np.log(min_p)
+                filtered_logprobs = [(token_id, logprob) for token_id, logprob in sorted_logprobs if logprob >= min_logprob_threshold]
+                
+                if not filtered_logprobs:
+                    continue
+                
+                # Calculate entropy for this position
+                logprobs_array = np.array([lp for _, lp in filtered_logprobs])
+                probs = np.exp(logprobs_array)
+                probs = probs / np.sum(probs)  # Normalize
+                entropy = -np.sum(probs * logprobs_array)
+                
+                # Create child nodes for each valid token
+                current_node = tree_nodes[current_node_id]
+                for i, (token_id, logprob) in enumerate(filtered_logprobs):
+                    token_text = self.get_token(token_id)
+                    token_prob = np.exp(logprob)
+                    
+                    child_node = {
+                        "id": node_id_counter,
+                        "parent_id": current_node_id,
+                        "text": token_text,
+                        "prob": float(token_prob),
+                        "log_prob": float(logprob),
+                        "entropy": float(entropy),
+                        "depth": current_depth + 1,
+                        "cumulative_text": current_node["cumulative_text"] + token_text,
+                        "full_prompt": current_prompt + token_text,
+                        "children": []
+                    }
+                    
+                    tree_nodes.append(child_node)
+                    current_node["children"].append(node_id_counter)
+                    
+                    # Add to exploration queue for next level
+                    exploration_queue.append((node_id_counter, current_prompt + token_text, current_depth + 1))
+                    node_id_counter += 1
+            
+            return {
+                "tree_nodes": tree_nodes,
+                "max_depth_reached": max(node["depth"] for node in tree_nodes),
+                "total_nodes": len(tree_nodes)
+            }
+            
+        except Exception as e:
+            return {
+                "tree_nodes": [],
+                "max_depth_reached": 0,
+                "total_nodes": 0,
+                "error": str(e)
+            }

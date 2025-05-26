@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
+const TreeVisualization = dynamic(() => import("@/components/TreeVisualization"), { ssr: false });
 
 type TokenData = {
   text: string;
@@ -24,6 +25,25 @@ type TokenData = {
   top_tokens: string[];
   top_logprobs: number[];
   top_logits: number[];
+};
+
+type TreeNode = {
+  id: number;
+  parent_id: number | null;
+  text: string;
+  prob: number;
+  log_prob: number;
+  entropy: number;
+  depth: number;
+  cumulative_text: string;
+  full_prompt: string;
+  children: number[];
+};
+
+type TreeData = {
+  tree_nodes: TreeNode[];
+  max_depth_reached: number;
+  total_nodes: number;
 };
 
 type ColorScheme = "blueOrange" | "greenRed";
@@ -147,6 +167,18 @@ export default function Page() {
   const [maxNewTokens, setMaxNewTokens] = useState(1024);
   const [topK, setTopK] = useState(5);
   const [colorScheme, setColorScheme] = useState<ColorScheme>("blueOrange");
+  
+  // Tree view state
+  const [viewMode, setViewMode] = useState<"linear" | "tree">("linear");
+  const [treeData, setTreeData] = useState<TreeData | null>(null);
+  const [selectedTreeNode, setSelectedTreeNode] = useState<TreeNode | null>(null);
+  const [treeLoading, setTreeLoading] = useState(false);
+  
+  // Tree generation parameters
+  const [treeMaxDepth, setTreeMaxDepth] = useState(4);
+  const [treeTopK, setTreeTopK] = useState(3);
+  const [treeTopP, setTreeTopP] = useState(0.9);
+  const [treeMinP, setTreeMinP] = useState(0.01);
 
   const generateTokens = async () => {
     setLoading(true);
@@ -169,6 +201,28 @@ export default function Page() {
     setLoading(false);
   };
 
+  const generateTree = async () => {
+    setTreeLoading(true);
+    try {
+      const response = await axios.post("http://localhost:8000/generate-tree", {
+        prompt,
+        temperature,
+        max_depth: treeMaxDepth,
+        top_k: treeTopK,
+        top_p: treeTopP,
+        min_p: treeMinP,
+      });
+      setTreeData(response.data);
+      setSelectedTreeNode(null);
+    } catch (error) {
+      console.error("Error generating tree:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error details:", error.message, error.response?.data);
+      }
+    }
+    setTreeLoading(false);
+  };
+
   const copyFullText = () => {
     const textToCopy = `${prompt}${fullText}`;
     navigator.clipboard.writeText(textToCopy)
@@ -183,6 +237,18 @@ export default function Page() {
 
   const sendToInput = () => {
     setPrompt(`${prompt}${fullText}`);
+  };
+
+  const handleTreeNodeClick = (node: TreeNode) => {
+    setSelectedTreeNode(node);
+    // Copy full prompt + generation up to this point to clipboard
+    navigator.clipboard.writeText(node.full_prompt)
+      .then(() => {
+        console.log('Tree path copied to clipboard');
+      })
+      .catch(err => {
+        console.error('Failed to copy tree path: ', err);
+      });
   };
 
   // Compute min and max for the selected color mode
@@ -217,50 +283,134 @@ export default function Page() {
             />
           </div>
           
-          <Button 
-            onClick={generateTokens}
-            disabled={loading}
-            className="bg-black text-white hover:bg-gray-800 w-full md:w-auto md:self-end"
-          >
-            {loading ? "Generating..." : "Generate"}
-          </Button>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="temperature">Temperature</Label>
-              <Input
-                id="temperature"
-                type="number"
-                min={0}
-                max={2}
-                step={0.1}
-                value={temperature}
-                onChange={(e) => setTemperature(Number(e.target.value))}
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="maxTokens">Max New Tokens</Label>
-              <Input
-                id="maxTokens"
-                type="number"
-                min={1}
-                max={100}
-                value={maxNewTokens}
-                onChange={(e) => setMaxNewTokens(Number(e.target.value))}
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="topK">Top K Logprobs</Label>
-              <Input
-                id="topK"
-                type="number"
-                min={1}
-                max={100}
-                value={topK}
-                onChange={(e) => setTopK(Number(e.target.value))}
-              />
+          <div className="flex gap-2">
+            <Button 
+              onClick={viewMode === "linear" ? generateTokens : generateTree}
+              disabled={loading || treeLoading}
+              className="bg-black text-white hover:bg-gray-800 flex-1 md:flex-none"
+            >
+              {viewMode === "linear" 
+                ? (loading ? "Generating..." : "Generate Linear") 
+                : (treeLoading ? "Generating Tree..." : "Generate Tree")}
+            </Button>
+            
+            <div className="flex border rounded-lg overflow-hidden">
+              <Button
+                variant={viewMode === "linear" ? "default" : "outline"}
+                onClick={() => setViewMode("linear")}
+                className="rounded-none"
+              >
+                Linear
+              </Button>
+              <Button
+                variant={viewMode === "tree" ? "default" : "outline"}
+                onClick={() => setViewMode("tree")}
+                className="rounded-none"
+              >
+                Tree
+              </Button>
             </div>
           </div>
+          
+          {viewMode === "linear" ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="temperature">Temperature</Label>
+                <Input
+                  id="temperature"
+                  type="number"
+                  min={0}
+                  max={2}
+                  step={0.1}
+                  value={temperature}
+                  onChange={(e) => setTemperature(Number(e.target.value))}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="maxTokens">Max New Tokens</Label>
+                <Input
+                  id="maxTokens"
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={maxNewTokens}
+                  onChange={(e) => setMaxNewTokens(Number(e.target.value))}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="topK">Top K Logprobs</Label>
+                <Input
+                  id="topK"
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={topK}
+                  onChange={(e) => setTopK(Number(e.target.value))}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="treeMaxDepth">Max Depth</Label>
+                <Input
+                  id="treeMaxDepth"
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={treeMaxDepth}
+                  onChange={(e) => setTreeMaxDepth(Number(e.target.value))}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="treeTopK">Top K</Label>
+                <Input
+                  id="treeTopK"
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={treeTopK}
+                  onChange={(e) => setTreeTopK(Number(e.target.value))}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="treeTopP">Top P</Label>
+                <Input
+                  id="treeTopP"
+                  type="number"
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  value={treeTopP}
+                  onChange={(e) => setTreeTopP(Number(e.target.value))}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="treeMinP">Min P</Label>
+                <Input
+                  id="treeMinP"
+                  type="number"
+                  min={0}
+                  max={0.5}
+                  step={0.01}
+                  value={treeMinP}
+                  onChange={(e) => setTreeMinP(Number(e.target.value))}
+                />
+              </div>
+              <div className="flex flex-col gap-2 col-span-2 md:col-span-4">
+                <Label htmlFor="treeTemperature">Temperature</Label>
+                <Input
+                  id="treeTemperature"
+                  type="number"
+                  min={0}
+                  max={2}
+                  step={0.1}
+                  value={temperature}
+                  onChange={(e) => setTemperature(Number(e.target.value))}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mb-6">
@@ -338,35 +488,45 @@ export default function Page() {
 
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-1/2">
-            <div className="text-2xl leading-relaxed mb-6 relative" style={{ fontFamily: 'Iosevka, monospace' }}>
-              {tokens.map((token, index) => {
-                const value = colorMode === "prob" ? token.prob : colorMode === "logprob" ? token.log_prob : token.entropy;
-                const backgroundColor = mapValueToColor(value, minVal, maxVal, colorScheme, colorMode);
-                
-                // Format whitespace characters for display
-                let displayText = formatWhitespaceToken(token.text);
-                
-                return (
-                  <div
-                    key={index}
-                    className="inline-block relative"
-                  >
-                    <span
-                      className="mx-1 cursor-pointer rounded px-1 text-sm"
-                      style={{ 
-                        backgroundColor,
-                        color: 'rgba(255, 255, 255, 0.95)',
-                        textShadow: '0px 0px 2px rgba(0, 0, 0, 0.3)',
-                        fontSize: '1.1rem',
-                      }}
-                      onClick={() => setSelectedToken(selectedToken === token ? null : token)}
+            {viewMode === "linear" ? (
+              <div className="text-2xl leading-relaxed mb-6 relative" style={{ fontFamily: 'Iosevka, monospace' }}>
+                {tokens.map((token, index) => {
+                  const value = colorMode === "prob" ? token.prob : colorMode === "logprob" ? token.log_prob : token.entropy;
+                  const backgroundColor = mapValueToColor(value, minVal, maxVal, colorScheme, colorMode);
+                  
+                  // Format whitespace characters for display
+                  let displayText = formatWhitespaceToken(token.text);
+                  
+                  return (
+                    <div
+                      key={index}
+                      className="inline-block relative"
                     >
-                      {displayText}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+                      <span
+                        className="mx-1 cursor-pointer rounded px-1 text-sm"
+                        style={{ 
+                          backgroundColor,
+                          color: 'rgba(255, 255, 255, 0.95)',
+                          textShadow: '0px 0px 2px rgba(0, 0, 0, 0.3)',
+                          fontSize: '1.1rem',
+                        }}
+                        onClick={() => setSelectedToken(selectedToken === token ? null : token)}
+                      >
+                        {displayText}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="h-[600px] border rounded-lg">
+                <TreeVisualization
+                  data={treeData}
+                  onNodeClick={handleTreeNodeClick}
+                  onNodeHover={setSelectedTreeNode}
+                />
+              </div>
+            )}
 
             {fullText && (
               <Card className="mt-6">
@@ -430,150 +590,210 @@ export default function Page() {
           </div>
 
           <div className="md:w-1/2">
-            {selectedToken ? (
-              <Card className="sticky top-6">
-                <CardHeader>
-                  <CardTitle>Token: "{formatWhitespaceToken(selectedToken.text)}"</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
-                    <div>
-                      <p className="font-semibold">Log Probability:</p>
-                      <p>{selectedToken.log_prob.toFixed(4)}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Entropy:</p>
-                      <p>{selectedToken.entropy.toFixed(4)}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">Probability:</p>
-                      <p>{selectedToken.prob.toFixed(4)}</p>
-                    </div>
-                  </div>
-                  {(() => {
-                    // Create sorted pairs of tokens with logprobs and logits
-                    const pairs = selectedToken.top_tokens.map((t, i) => {
-                      const formattedToken = formatWhitespaceToken(t);
-                      return {
-                        // Raw token value without quotes for the plot
-                        token: formattedToken,
-                        // Formatted token with quotes for the table display
-                        displayToken: `"${formattedToken}"`,
-                        logprob: selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0,
-                        prob: Math.exp(selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0),
-                        logit: selectedToken.top_logits ? selectedToken.top_logits[i] : 0
-                      };
-                    });
-                    // Sort by logprobs in descending order
-                    pairs.sort((a, b) => b.logprob - a.logprob);
-                    
-                    return (
+            {viewMode === "linear" ? (
+              selectedToken ? (
+                <Card className="sticky top-6">
+                  <CardHeader>
+                    <CardTitle>Token: "{formatWhitespaceToken(selectedToken.text)}"</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
                       <div>
-                        <Plot
-                          data={[
-                            {
-                              type: "bar",
-                              x: pairs.map(p => p.prob),
-                              y: pairs.map(p => p.token),
-                              orientation: "h",
-                              marker: { 
-                                color: "hsl(215, 100%, 50%)", // Match the blue theme
-                                line: {
-                                  width: 0,
-                                }
+                        <p className="font-semibold">Log Probability:</p>
+                        <p>{selectedToken.log_prob.toFixed(4)}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Entropy:</p>
+                        <p>{selectedToken.entropy.toFixed(4)}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Probability:</p>
+                        <p>{selectedToken.prob.toFixed(4)}</p>
+                      </div>
+                    </div>
+                    {(() => {
+                      // Create sorted pairs of tokens with logprobs and logits
+                      const pairs = selectedToken.top_tokens.map((t, i) => {
+                        const formattedToken = formatWhitespaceToken(t);
+                        return {
+                          // Raw token value without quotes for the plot
+                          token: formattedToken,
+                          // Formatted token with quotes for the table display
+                          displayToken: `"${formattedToken}"`,
+                          logprob: selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0,
+                          prob: Math.exp(selectedToken.top_logprobs ? selectedToken.top_logprobs[i] : 0),
+                          logit: selectedToken.top_logits ? selectedToken.top_logits[i] : 0
+                        };
+                      });
+                      // Sort by logprobs in descending order
+                      pairs.sort((a, b) => b.logprob - a.logprob);
+                      
+                      return (
+                        <div>
+                          <Plot
+                            data={[
+                              {
+                                type: "bar",
+                                x: pairs.map(p => p.prob),
+                                y: pairs.map(p => p.token),
+                                orientation: "h",
+                                marker: { 
+                                  color: "hsl(215, 100%, 50%)", // Match the blue theme
+                                  line: {
+                                    width: 0,
+                                  }
+                                },
+                                hovertemplate: '%{y}: %{x:.4f}<extra></extra>', // Clean hover template
+                                showlegend: false
                               },
-                              hovertemplate: '%{y}: %{x:.4f}<extra></extra>', // Clean hover template
-                              showlegend: false
-                            },
-                          ]}
-                          layout={{
-                            title: {
-                              text: "Token Probabilities",
-                              font: {
-                                family: "system-ui, sans-serif",
-                                size: 16,
-                              }
-                            },
-                            xaxis: { 
+                            ]}
+                            layout={{
                               title: {
-                                text: "Probability",
+                                text: "Token Probabilities",
                                 font: {
                                   family: "system-ui, sans-serif",
-                                  size: 14,
+                                  size: 16,
                                 }
                               },
-                              autorange: true,
-                              showgrid: true,
-                              gridcolor: "rgba(0,0,0,0.05)",
-                              zeroline: false,
-                            },
-                            yaxis: { 
-                              // No title for y-axis as requested
-                              automargin: true,
-                              type: "category",
-                              categoryorder: "array",
-                              categoryarray: pairs.map(p => p.token).reverse(),
-                              tickfont: {
-                                family: "monospace",
-                                size: 12,
+                              xaxis: { 
+                                title: {
+                                  text: "Probability",
+                                  font: {
+                                    family: "system-ui, sans-serif",
+                                    size: 14,
+                                  }
+                                },
+                                autorange: true,
+                                showgrid: true,
+                                gridcolor: "rgba(0,0,0,0.05)",
+                                zeroline: false,
                               },
-                            },
-                            margin: { l: 100, r: 20, t: 50, b: 40 },
-                            paper_bgcolor: 'rgba(0,0,0,0)',
-                            plot_bgcolor: 'rgba(0,0,0,0)',
-                            font: { 
-                              family: "system-ui, sans-serif",
-                              color: 'currentColor' 
-                            },
-                            bargap: 0.2,
-                            hoverlabel: {
-                              bgcolor: "white",
-                              font: { family: "monospace" }
-                            }
-                          }}
-                          style={{ width: "100%", height: "300px", borderRadius: "8px" }}
-                          config={{ 
-                            responsive: true,
-                            displayModeBar: false // Remove the mode bar for cleaner look
-                          }}
-                        />
-                        
-                        <div className="mt-4">
-                          <h4 className="text-md font-semibold mb-2">Top Tokens Details</h4>
-                          <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                              <thead>
-                                <tr className="border-b">
-                                  <th className="text-left py-2">Token</th>
-                                  <th className="text-right py-2">Probability</th>
-                                  <th className="text-right py-2">Log Prob</th>
-                                  <th className="text-right py-2">Logit</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {pairs.map((pair, idx) => (
-                                  <tr key={idx} className="border-b border-gray-100">
-                                    <td className="py-1 font-mono">{pair.token}</td>
-                                    <td className="text-right py-1">{pair.prob.toFixed(4)}</td>
-                                    <td className="text-right py-1">{pair.logprob.toFixed(4)}</td>
-                                    <td className="text-right py-1">{pair.logit.toFixed(4)}</td>
+                              yaxis: { 
+                                // No title for y-axis as requested
+                                automargin: true,
+                                type: "category",
+                                categoryorder: "array",
+                                categoryarray: pairs.map(p => p.token).reverse(),
+                                tickfont: {
+                                  family: "monospace",
+                                  size: 12,
+                                },
+                              },
+                              margin: { l: 100, r: 20, t: 50, b: 40 },
+                              paper_bgcolor: 'rgba(0,0,0,0)',
+                              plot_bgcolor: 'rgba(0,0,0,0)',
+                              font: { 
+                                family: "system-ui, sans-serif",
+                                color: 'currentColor' 
+                              },
+                              bargap: 0.2,
+                              hoverlabel: {
+                                bgcolor: "white",
+                                font: { family: "monospace" }
+                              }
+                            }}
+                            style={{ width: "100%", height: "300px", borderRadius: "8px" }}
+                            config={{ 
+                              responsive: true,
+                              displayModeBar: false // Remove the mode bar for cleaner look
+                            }}
+                          />
+                          
+                          <div className="mt-4">
+                            <h4 className="text-md font-semibold mb-2">Top Tokens Details</h4>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-sm">
+                                <thead>
+                                  <tr className="border-b">
+                                    <th className="text-left py-2">Token</th>
+                                    <th className="text-right py-2">Probability</th>
+                                    <th className="text-right py-2">Log Prob</th>
+                                    <th className="text-right py-2">Logit</th>
                                   </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                                </thead>
+                                <tbody>
+                                  {pairs.map((pair, idx) => (
+                                    <tr key={idx} className="border-b border-gray-100">
+                                      <td className="py-1 font-mono">{pair.token}</td>
+                                      <td className="text-right py-1">{pair.prob.toFixed(4)}</td>
+                                      <td className="text-right py-1">{pair.logprob.toFixed(4)}</td>
+                                      <td className="text-right py-1">{pair.logit.toFixed(4)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })()}
-                </CardContent>
-              </Card>
+                      );
+                    })()}
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="h-full flex items-center justify-center p-8 border border-dashed rounded-lg">
+                  <p className="text-muted-foreground text-center">
+                    Click on a token to view detailed statistics
+                  </p>
+                </div>
+              )
             ) : (
-              <div className="h-full flex items-center justify-center p-8 border border-dashed rounded-lg">
-                <p className="text-muted-foreground text-center">
-                  Click on a token to view detailed statistics
-                </p>
-              </div>
+              selectedTreeNode ? (
+                <Card className="sticky top-6">
+                  <CardHeader>
+                    <CardTitle>Tree Node: "{formatWhitespaceToken(selectedTreeNode.text)}"</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                      <div>
+                        <p className="font-semibold">Probability:</p>
+                        <p>{selectedTreeNode.prob.toFixed(4)}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Log Probability:</p>
+                        <p>{selectedTreeNode.log_prob.toFixed(4)}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Entropy:</p>
+                        <p>{selectedTreeNode.entropy.toFixed(4)}</p>
+                      </div>
+                      <div>
+                        <p className="font-semibold">Depth:</p>
+                        <p>{selectedTreeNode.depth}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <p className="font-semibold mb-2">Cumulative Text:</p>
+                        <div className="p-3 bg-gray-50 rounded-md font-mono text-sm">
+                          {formatWhitespaceToken(selectedTreeNode.cumulative_text) || "(empty)"}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <p className="font-semibold mb-2">Full Prompt (copied to clipboard):</p>
+                        <div className="p-3 bg-blue-50 rounded-md font-mono text-sm max-h-40 overflow-y-auto">
+                          {selectedTreeNode.full_prompt}
+                        </div>
+                      </div>
+                      
+                      <Button
+                        onClick={() => setPrompt(selectedTreeNode.full_prompt)}
+                        className="w-full"
+                        variant="outline"
+                      >
+                        Use as new prompt
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="h-full flex items-center justify-center p-8 border border-dashed rounded-lg">
+                  <p className="text-muted-foreground text-center">
+                    Click on a tree node to view path details and copy prompt
+                  </p>
+                </div>
+              )
             )}
           </div>
         </div>

@@ -5,6 +5,10 @@ class InferenceBackend(ABC):
     @abstractmethod
     def generate(self, prompt: str, temperature: float, max_new_tokens: int, top_k: int) -> dict:
         pass
+    
+    @abstractmethod
+    def generate_tree(self, prompt: str, temperature: float, max_depth: int, top_k: int, top_p: float, min_p: float) -> dict:
+        pass
 
 
 def get_backend(name: str):
