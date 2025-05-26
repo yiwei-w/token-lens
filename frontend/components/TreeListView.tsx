@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { ChevronRight, ChevronDown, Copy } from 'lucide-react'
+import { ChevronRight, ChevronDown, Copy, ExpandIcon, Minimize2 } from 'lucide-react'
 
 interface TreeNode {
   id: number
@@ -55,6 +55,15 @@ const TreeListView: React.FC<TreeListViewProps> = ({
       newExpanded.add(nodeId)
     }
     setExpandedNodes(newExpanded)
+  }
+
+  const expandAll = () => {
+    const allNodeIds = new Set(data.tree_nodes.map(node => node.id))
+    setExpandedNodes(allNodeIds)
+  }
+
+  const collapseAll = () => {
+    setExpandedNodes(new Set([0])) // Keep only root expanded
   }
 
   const calculatePathProbability = (node: TreeNode): number => {
@@ -180,12 +189,32 @@ const TreeListView: React.FC<TreeListViewProps> = ({
   return (
     <div className="h-full overflow-auto bg-white border rounded">
       <div className="p-3 border-b bg-gray-50">
-        <div className="text-sm font-medium">Generation Tree</div>
-        <div className="text-xs text-gray-600">
-          {data.total_nodes} nodes • {data.max_depth_reached} max depth
-        </div>
-        <div className="text-xs text-gray-500 mt-1">
-          Click nodes to select • Colors show token probability • Sorted by probability
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm font-medium">Generation Tree</div>
+            <div className="text-xs text-gray-600">
+              {data.total_nodes} nodes • {data.max_depth_reached} max depth
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              Click nodes to select • Colors show token probability • Sorted by probability
+            </div>
+          </div>
+          <div className="flex gap-1">
+            <button
+              onClick={expandAll}
+              className="p-1.5 hover:bg-gray-200 rounded text-gray-600"
+              title="Expand All"
+            >
+              <ExpandIcon size={14} />
+            </button>
+            <button
+              onClick={collapseAll}
+              className="p-1.5 hover:bg-gray-200 rounded text-gray-600"
+              title="Collapse All"
+            >
+              <Minimize2 size={14} />
+            </button>
+          </div>
         </div>
       </div>
       <div className="p-2">
