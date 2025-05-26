@@ -359,7 +359,7 @@ export default function Page() {
                   min={1}
                   max={10}
                   value={treeMaxDepth}
-                  onChange={(e) => setTreeMaxDepth(Number(e.target.value))}
+                  onChange={(e) => setTreeMaxDepth(e.target.value === '' ? 1 : Number(e.target.value))}
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -370,7 +370,7 @@ export default function Page() {
                   min={1}
                   max={10}
                   value={treeTopK}
-                  onChange={(e) => setTreeTopK(Number(e.target.value))}
+                  onChange={(e) => setTreeTopK(e.target.value === '' ? 1 : Number(e.target.value))}
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -382,7 +382,7 @@ export default function Page() {
                   max={1}
                   step={0.1}
                   value={treeTopP}
-                  onChange={(e) => setTreeTopP(Number(e.target.value))}
+                  onChange={(e) => setTreeTopP(e.target.value === '' ? 0 : Number(e.target.value))}
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -394,7 +394,7 @@ export default function Page() {
                   max={0.5}
                   step={0.01}
                   value={treeMinP}
-                  onChange={(e) => setTreeMinP(Number(e.target.value))}
+                  onChange={(e) => setTreeMinP(e.target.value === '' ? 0 : Number(e.target.value))}
                 />
               </div>
               <div className="flex flex-col gap-2 col-span-2 md:col-span-4">
@@ -406,7 +406,7 @@ export default function Page() {
                   max={2}
                   step={0.1}
                   value={temperature}
-                  onChange={(e) => setTemperature(Number(e.target.value))}
+                  onChange={(e) => setTemperature(e.target.value === '' ? 0 : Number(e.target.value))}
                 />
               </div>
             </div>

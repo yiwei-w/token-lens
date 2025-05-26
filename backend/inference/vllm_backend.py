@@ -174,9 +174,12 @@ class VLLMBackend(InferenceBackend):
                     sorted_logprobs = sorted_logprobs[:top_k]
                 
                 # Apply min_p filtering
-                max_logprob = sorted_logprobs[0][1] if sorted_logprobs else float('-inf')
-                min_logprob_threshold = max_logprob + np.log(min_p)
-                filtered_logprobs = [(token_id, logprob) for token_id, logprob in sorted_logprobs if logprob >= min_logprob_threshold]
+                if min_p > 0.0:
+                    max_logprob = sorted_logprobs[0][1] if sorted_logprobs else float('-inf')
+                    min_logprob_threshold = max_logprob + np.log(min_p)
+                    filtered_logprobs = [(token_id, logprob) for token_id, logprob in sorted_logprobs if logprob >= min_logprob_threshold]
+                else:
+                    filtered_logprobs = sorted_logprobs
                 
                 if not filtered_logprobs:
                     continue
