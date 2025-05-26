@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 const TreeVisualization = dynamic(() => import("@/components/TreeVisualization"), { ssr: false });
+const TreeListView = dynamic(() => import("@/components/TreeListView"), { ssr: false });
 
 type TokenData = {
   text: string;
@@ -520,10 +521,10 @@ export default function Page() {
               </div>
             ) : (
               <div className="h-[600px] border rounded-lg">
-                <TreeVisualization
+                <TreeListView
                   data={treeData}
                   onNodeClick={handleTreeNodeClick}
-                  onNodeHover={setSelectedTreeNode}
+                  selectedNodeId={selectedTreeNode?.id || null}
                 />
               </div>
             )}

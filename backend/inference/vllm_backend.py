@@ -142,7 +142,7 @@ class VLLMBackend(InferenceBackend):
             # Queue for breadth-first exploration: (node_id, current_prompt, depth)
             exploration_queue = [(0, prompt, 0)]
             
-            while exploration_queue and max(node["depth"] for node in tree_nodes) < max_depth:
+            while exploration_queue:
                 current_node_id, current_prompt, current_depth = exploration_queue.pop(0)
                 
                 if current_depth >= max_depth:
@@ -184,24 +184,26 @@ class VLLMBackend(InferenceBackend):
                 if not filtered_logprobs:
                     continue
                 
-                # Calculate entropy for this position
+                # Calculate entropy for this position  
                 logprobs_array = np.array([lp for _, lp in filtered_logprobs])
                 probs = np.exp(logprobs_array)
                 probs = probs / np.sum(probs)  # Normalize
-                entropy = -np.sum(probs * logprobs_array)
+                normalized_logprobs = np.log(probs)  # Get normalized log probs
+                entropy = -np.sum(probs * normalized_logprobs)
                 
                 # Create child nodes for each valid token
                 current_node = tree_nodes[current_node_id]
                 for i, (token_id, logprob) in enumerate(filtered_logprobs):
                     token_text = self.get_token(token_id)
-                    token_prob = np.exp(logprob)
+                    token_prob = probs[i]  # Use normalized probability
+                    token_logprob = normalized_logprobs[i]  # Use normalized log prob
                     
                     child_node = {
                         "id": node_id_counter,
                         "parent_id": current_node_id,
                         "text": token_text,
                         "prob": float(token_prob),
-                        "log_prob": float(logprob),
+                        "log_prob": float(token_logprob),
                         "entropy": float(entropy),
                         "depth": current_depth + 1,
                         "cumulative_text": current_node["cumulative_text"] + token_text,

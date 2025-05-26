@@ -118,7 +118,7 @@ class HuggingFaceBackend(InferenceBackend):
             # Queue for exploration: (node_id, current_prompt, depth)
             exploration_queue = [(0, prompt, 0)]
             
-            while exploration_queue and max(node["depth"] for node in tree_nodes) < max_depth:
+            while exploration_queue:
                 current_node_id, current_prompt, current_depth = exploration_queue.pop(0)
                 
                 if current_depth >= max_depth:
