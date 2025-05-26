@@ -186,22 +186,20 @@ class VLLMBackend(InferenceBackend):
                 
                 # Calculate entropy for this position  
                 logprobs_array = np.array([lp for _, lp in filtered_logprobs])
-                print(f"DEBUG: logprobs_array = {logprobs_array}")
-                
                 probs = np.exp(logprobs_array)
-                print(f"DEBUG: probs after exp = {probs}")
+                probs = probs / np.sum(probs)  # Normalize
                 
-                probs_sum = np.sum(probs)
-                print(f"DEBUG: probs_sum = {probs_sum}")
+                # Calculate entropy safely - avoid 0 * log(0) = 0 * (-inf) = NaN
+                # Use the mathematical identity: lim(x→0) x*log(x) = 0
+                normalized_logprobs = np.log(probs)
                 
-                probs = probs / probs_sum  # Normalize
-                print(f"DEBUG: normalized probs = {probs}")
+                # Only include terms where prob > 0 to avoid 0 * (-inf) = NaN
+                entropy_terms = []
+                for i, (p, logp) in enumerate(zip(probs, normalized_logprobs)):
+                    if p > 0:  # Only calculate for non-zero probabilities
+                        entropy_terms.append(p * logp)
                 
-                normalized_logprobs = np.log(probs)  # Get normalized log probs
-                print(f"DEBUG: normalized_logprobs = {normalized_logprobs}")
-                
-                entropy = -np.sum(probs * normalized_logprobs)
-                print(f"DEBUG: entropy = {entropy}")
+                entropy = -np.sum(entropy_terms) if entropy_terms else 0.0
                 
                 # Create child nodes for each valid token
                 current_node = tree_nodes[current_node_id]
@@ -209,16 +207,6 @@ class VLLMBackend(InferenceBackend):
                     token_text = self.get_token(token_id)
                     token_prob = probs[i]  # Use normalized probability
                     token_logprob = normalized_logprobs[i]  # Use normalized log prob
-                    
-                    print(f"DEBUG: token '{token_text}' - prob={token_prob}, logprob={token_logprob}, entropy={entropy}")
-                    
-                    # Check for NaN values before creating node
-                    if np.isnan(token_prob) or np.isnan(token_logprob) or np.isnan(entropy):
-                        print(f"ERROR: NaN detected for token '{token_text}'!")
-                        print(f"  token_prob = {token_prob}")
-                        print(f"  token_logprob = {token_logprob}")
-                        print(f"  entropy = {entropy}")
-                        continue  # Skip this token
                     
                     child_node = {
                         "id": node_id_counter,
