@@ -172,7 +172,6 @@ class VLLMBackend(InferenceBackend):
                 sorted_logprobs = sorted(all_logprobs, key=lambda x: x[1], reverse=True)
                 filtered_logprobs = sorted_logprobs[:top_k]
                 
-                print(f"DEBUG: vLLM returned {len(all_logprobs)} tokens, using top {len(filtered_logprobs)} for tree branching")
                 
                 if not filtered_logprobs:
                     continue
@@ -225,22 +224,10 @@ class VLLMBackend(InferenceBackend):
                     exploration_queue.append((node_id_counter, current_prompt + token_text, current_depth + 1))
                     node_id_counter += 1
             
-            # Debug: Count nodes by depth
-            depth_counts = {}
-            for node in tree_nodes:
-                depth = node["depth"]
-                depth_counts[depth] = depth_counts.get(depth, 0) + 1
-            
-            print(f"DEBUG: Node count by depth: {depth_counts}")
-            print(f"DEBUG: Expected max at depth 4: {6**4} = 1296")
-            print(f"DEBUG: Expected total: 1 + 6 + 36 + 216 + 1296 = 1555")
-            print(f"DEBUG: Actual total: {len(tree_nodes)}")
-            
             return {
                 "tree_nodes": tree_nodes,
                 "max_depth_reached": max(node["depth"] for node in tree_nodes),
-                "total_nodes": len(tree_nodes),
-                "debug_depth_counts": depth_counts
+                "total_nodes": len(tree_nodes)
             }
             
         except Exception as e:
