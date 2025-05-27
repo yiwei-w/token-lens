@@ -166,9 +166,13 @@ class VLLMBackend(InferenceBackend):
                 
                 token_logprobs = output.outputs[0].logprobs[0]
                 
-                # vLLM has already applied top_k, top_p, min_p filtering
-                # Just use the returned logprobs directly
-                filtered_logprobs = [(token_id, logprob.logprob) for token_id, logprob in token_logprobs.items()]
+                # vLLM returns logprobs for many tokens, but we need to limit to our top_k for tree branching
+                all_logprobs = [(token_id, logprob.logprob) for token_id, logprob in token_logprobs.items()]
+                # Sort by logprob (highest first) and take only top_k
+                sorted_logprobs = sorted(all_logprobs, key=lambda x: x[1], reverse=True)
+                filtered_logprobs = sorted_logprobs[:top_k]
+                
+                print(f"DEBUG: vLLM returned {len(all_logprobs)} tokens, using top {len(filtered_logprobs)} for tree branching")
                 
                 if not filtered_logprobs:
                     continue
